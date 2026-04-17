@@ -32,9 +32,16 @@ app.use((req, res, next) => {
 // ✅ Serve uploaded images publicly
 app.use("/uploads", express.static("uploads"))
 
-// ✅ Connect DB
-console.log("Attempting to connect to DB...");
-connectDB();
+// ✅ Connect DB (Lazy middleware for serverless stability)
+app.use(async (req, res, next) => {
+    try {
+        await connectDB();
+        next();
+    } catch (err) {
+        console.error("DB Middleware Error:", err.message);
+        next(); // Proceed anyway and let the routes handle failures
+    }
+});
 
 // ---------------------------------------------------------
 // 🔥 AI PREDICTION DIRECT ROUTE (Integration Start)

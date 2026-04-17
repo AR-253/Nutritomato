@@ -1,0 +1,44 @@
+.home-container {
+    width: 100%;
+    min-height: 100vh;
+    animation: fadeInPage 1s ease-in-out;
+}
+
+/* Har section ke darmiyan professional gap */
+.home-container > * {
+    margin-bottom: 60px;
+}
+
+/* Content wrapper taake side margins set rahein */
+.home-section-wrapper {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 4vw;
+    display: flex;
+    flex-direction: column;
+    gap: 80px; /* RecommendedFood aur FoodDisplay ke darmiyan gap */
+}
+
+/* Animations */
+@keyframes fadeInPage {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Fixes for Mobile */
+@media (max-width: 750px) {
+    .home-container > * {
+        margin-bottom: 40px;
+    }
+    
+    .home-section-wrapper {
+        padding: 0 15px;
+        gap: 50px;
+    }
+}

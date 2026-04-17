@@ -1,0 +1,131 @@
+.login-popup {
+    position: fixed; /* absolute ki jagah fixed behtar hai taake scroll karne par popup center mein rahe */
+    top: 0;
+    left: 0;
+    z-index: 1000; /* Isay sab se upar hona chahiye */
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Thora light overlay */
+    display: grid;
+    backdrop-filter: blur(5px); /* Background blur effect for premium feel */
+}
+
+.login-popup-container {
+    place-self: center;
+    width: max(23vw, 350px);
+    color: #4a4a4a; /* Thora dark gray for readability */
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 30px;
+    border-radius: 12px; /* Thora zyada rounded */
+    font-size: 14px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    animation: popupFadeIn 0.4s ease-out;
+}
+
+@keyframes popupFadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.login-popup-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #2c3e50;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.login-popup-title img {
+    width: 14px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.login-popup-title img:hover {
+    transform: rotate(90deg); /* Close icon par hover effect */
+}
+
+.login-popup-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.login-popup-inputs input,
+.login-popup-inputs select {
+    outline: none;
+    border: 1.5px solid #e1e1e1; /* Thora thick border */
+    padding: 12px;
+    border-radius: 6px;
+    transition: 0.3s border-color;
+}
+
+.login-popup-inputs input:focus,
+.login-popup-inputs select:focus {
+    border-color: tomato; /* Focus karne par theme color */
+}
+
+.login-popup-inputs .multi-input-row {
+    display: flex;
+    gap: 12px;
+}
+
+.login-popup-container button {
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    color: white;
+    background-color: tomato;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.login-popup-container button:hover {
+    background-color: #e5533d;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 99, 71, 0.3);
+}
+
+.wizard-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: space-between;
+}
+
+.wizard-actions .prev-btn {
+    background-color: #95a5a6; /* Thora soft gray */
+}
+
+.wizard-actions .prev-btn:hover {
+    background-color: #7f8c8d;
+}
+
+.login-popup-condition {
+    display: flex;
+    align-items: start;
+    gap: 10px;
+    margin-top: 5px;
+    font-size: 13px;
+}
+
+.login-popup-condition input {
+    margin-top: 3px;
+    cursor: pointer;
+}
+
+.login-popup p {
+    text-align: center;
+}
+
+.login-popup p span {
+    color: tomato;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 5px;
+}

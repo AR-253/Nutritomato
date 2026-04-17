@@ -1,0 +1,140 @@
+/* Container styling */
+.scanner-container {
+    padding: 40px 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #fcfcfc;
+    min-height: 80vh;
+}
+
+.scanner-header h1 {
+    color: #ff6347; /* Tomato Color */
+    font-size: 2.5rem;
+    margin-bottom: 5px;
+}
+
+.scanner-header p {
+    color: #666;
+    margin-bottom: 30px;
+}
+
+/* Card styling */
+.upload-card {
+    background: white;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 30px;
+    border-radius: 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border: 1px solid #eee;
+}
+
+/* Image Drop Zone */
+.drop-zone {
+    width: 100%;
+    height: 300px;
+    background: #fff5f2;
+    border: 2px dashed #ffbca0;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.preview-image {
+    width: 100%;
+    height: 100%;
+    object-cover: cover;
+}
+
+.placeholder-text {
+    color: #ffbca0;
+    text-align: center;
+}
+
+.upload-icon {
+    font-size: 50px;
+    display: block;
+}
+
+/* Button styling */
+.custom-file-button {
+    background-color: #ff6347;
+    color: white;
+    padding: 12px 30px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    display: inline-block;
+    transition: 0.3s;
+}
+
+.custom-file-button:hover {
+    background-color: #e5533d;
+    transform: translateY(-2px);
+}
+
+/* Result Section */
+.result-section {
+    margin-top: 25px;
+    padding: 20px;
+    background: #fffafa;
+    border-radius: 15px;
+    border: 1px solid #ff634722;
+}
+
+.food-title {
+    text-transform: capitalize;
+    color: #333;
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+}
+
+.stat-item {
+    background: white;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.75rem;
+    color: #888;
+}
+
+.stat-value {
+    display: block;
+    font-weight: bold;
+    color: #ff6347;
+}
+
+.ai-note {
+    font-size: 0.7rem;
+    color: #aaa;
+    margin-top: 15px;
+    font-style: italic;
+}
+
+/* Loading Spinner */
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #ff6347;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

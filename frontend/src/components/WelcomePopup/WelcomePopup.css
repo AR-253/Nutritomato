@@ -1,0 +1,89 @@
+.welcome-popup {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    /* Or Center: top: 20%; left: 50%; transform: translateX(-50%); */
+    z-index: 2000;
+    pointer-events: none;
+}
+
+.welcome-content {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border: 1px solid tomato;
+    border-left: 5px solid tomato;
+    padding: 15px 25px;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    min-width: 250px;
+    transform: translateX(100px);
+    opacity: 0;
+    transition: all 0.5s ease-out;
+}
+
+.welcome-popup.show .welcome-content {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.welcome-popup.hide .welcome-content {
+    transform: translateX(100px);
+    /* Slide out right */
+    opacity: 0;
+}
+
+.welcome-content .wave {
+    font-size: 24px;
+    animation: wave 1s infinite alternate;
+}
+
+.welcome-content .text-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.welcome-content h3 {
+    font-size: 12px;
+    color: #666;
+    margin: 0;
+    font-weight: 500;
+}
+
+.welcome-content h2 {
+    font-size: 18px;
+    color: #333;
+    margin: 0;
+    font-weight: 600;
+}
+
+@keyframes wave {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(20deg);
+    }
+}
+
+@media (max-width: 600px) {
+    .welcome-popup {
+        top: 80px;
+        right: 50%;
+        transform: translateX(50%);
+        width: 90%;
+    }
+
+    .welcome-content {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .welcome-popup.show .welcome-content {
+        transform: translateX(0);
+        /* Reset centering override if needed, but here simple valid */
+    }
+}

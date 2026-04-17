@@ -1,0 +1,72 @@
+.recommended-food {
+    margin-top: 30px;
+    padding: 0 20px;
+}
+
+.recommended-food h2 {
+    font-size: 2vw;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+/* React Multi Carousel overrides */
+.carousel-container {
+    padding-bottom: 30px;
+    padding-left: 50px;
+    /* Space for Left Arrow */
+    padding-right: 50px;
+    /* Space for Right Arrow */
+}
+
+.react-multi-carousel-item {
+    justify-content: center;
+    height: 100%;
+}
+
+/* Ensure FoodItem takes full height */
+.react-multi-carousel-item>div {
+    height: 100%;
+    display: flex;
+    flex: 1;
+}
+
+.react-multi-carousel-item>div>.food-item {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: 1;
+}
+
+/* Custom Navigation Buttons (Tomato Theme) */
+.react-multiple-carousel__arrow {
+    background: tomato !important;
+    min-width: 45px;
+    min-height: 45px;
+    z-index: 1000;
+    border: none;
+    box-shadow: 0 4px 10px rgba(255, 99, 71, 0.4);
+    border-radius: 50% !important;
+}
+
+.react-multiple-carousel__arrow::before {
+    color: white !important;
+    font-weight: bold;
+}
+
+.react-multiple-carousel__arrow:hover {
+    background: #e04f35 !important;
+}
+
+/* Position exactly in the white padding area */
+.react-multiple-carousel__arrow--left {
+    left: 0 !important;
+    background: tomato !important;
+    /* Double force */
+}
+
+.react-multiple-carousel__arrow--right {
+    right: 0 !important;
+    background: tomato !important;
+    /* Double force */
+}

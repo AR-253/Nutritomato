@@ -1,0 +1,225 @@
+.order-container {
+  padding: 40px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.order-header h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2d3436;
+  margin-bottom: 5px;
+}
+
+.order-header p {
+  color: #636e72;
+  font-size: 14px;
+}
+
+.order-stats {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 8px 16px;
+  background: white;
+  border: 1px solid #dfe6e9;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #636e72;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+  border-color: #ff6347;
+  color: #ff6347;
+}
+
+.filter-btn.active {
+  background: #2d3436;
+  color: white;
+  border-color: #2d3436;
+}
+
+.filter-btn.active.new { background: #ff4757; border-color: #ff4757; }
+.filter-btn.active.processing { background: #ff9f43; border-color: #ff9f43; }
+.filter-btn.active.shipping { background: #4834d4; border-color: #4834d4; }
+.filter-btn.active.delivered { background: #1db954; border-color: #1db954; }
+
+/* Order Grid */
+.order-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 25px;
+}
+
+.order-card {
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  transition: 0.3s all ease;
+  border-left: 6px solid #dfe6e9;
+}
+
+.order-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+}
+
+/* Status Bound Borders */
+.status-processing { border-left-color: #ff9f43; }
+.status-shipping { border-left-color: #4834d4; }
+.status-delivered { border-left-color: #1db954; }
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.order-id-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.order-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.order-id {
+  font-weight: 700;
+  font-size: 14px;
+  color: #2d3436;
+}
+
+.order-time {
+  font-size: 11px;
+  font-weight: 500;
+  color: #ff6347;
+  letter-spacing: 0.5px;
+}
+
+.status-tag {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: #f8f9fa;
+  color: #636e72;
+}
+
+.status-tag.status-processing { background: #fff4e5; color: #ff9f43; }
+.status-tag.status-shipping { background: #eef2ff; color: #4834d4; }
+.status-tag.status-delivered { background: #e3f9e5; color: #1db954; }
+
+.card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.order-details {
+  border-bottom: 1px solid #f8f9fa;
+  padding-bottom: 15px;
+}
+
+.items-list {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2d3436;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+.customer-info p {
+  font-size: 13px;
+  color: #636e72;
+  margin-bottom: 4px;
+}
+
+.customer-name {
+  font-weight: 700;
+  color: #ff6347 !important;
+  font-size: 14px !important;
+}
+
+/* Summary Box */
+.order-summary {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 12px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #636e72;
+  margin-bottom: 5px;
+}
+
+.summary-row.total {
+  margin-top: 10px;
+  padding-top: 5px;
+  border-top: 1px dashed #dfe6e9;
+  font-weight: 700;
+  color: #2d3436;
+  font-size: 15px;
+}
+
+/* Status Selector */
+.card-actions {
+  margin-top: 20px;
+}
+
+.status-selector {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #dfe6e9;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  background: #fafafa;
+  transition: 0.3s;
+}
+
+.status-selector:focus {
+  outline: none;
+  border-color: #ff6347;
+  background: white;
+}
+
+.empty-orders {
+  text-align: center;
+  padding: 100px;
+  color: #b2bec3;
+}
+
+@media (max-width: 600px) {
+  .order-grid { grid-template-columns: 1fr; }
+  .order-container { padding: 20px; }
+}

@@ -1,0 +1,142 @@
+{
+    "0": {
+        "Dish_Name": "Aloo gobi",
+        "Calories": 150,
+        "Protein": 4,
+        "Carbs": 18,
+        "Fats": 8
+    },
+    "1": {
+        "Dish_Name": "Bbq",
+        "Calories": 250,
+        "Protein": 28,
+        "Carbs": 2,
+        "Fats": 14
+    },
+    "2": {
+        "Dish_Name": "Bhindi fry",
+        "Calories": 160,
+        "Protein": 3,
+        "Carbs": 12,
+        "Fats": 11
+    },
+    "3": {
+        "Dish_Name": "Biryani",
+        "Calories": 480,
+        "Protein": 22,
+        "Carbs": 60,
+        "Fats": 16
+    },
+    "4": {
+        "Dish_Name": "Burger",
+        "Calories": 350,
+        "Protein": 15,
+        "Carbs": 40,
+        "Fats": 18
+    },
+    "5": {
+        "Dish_Name": "Butter chicken",
+        "Calories": 450,
+        "Protein": 25,
+        "Carbs": 12,
+        "Fats": 35
+    },
+    "6": {
+        "Dish_Name": "Butter naan",
+        "Calories": 300,
+        "Protein": 8,
+        "Carbs": 50,
+        "Fats": 9
+    },
+    "7": {
+        "Dish_Name": "Chai",
+        "Calories": 90,
+        "Protein": 3,
+        "Carbs": 12,
+        "Fats": 4
+    },
+    "8": {
+        "Dish_Name": "Chicken tikka",
+        "Calories": 220,
+        "Protein": 30,
+        "Carbs": 4,
+        "Fats": 10
+    },
+    "9": {
+        "Dish_Name": "Haleem",
+        "Calories": 350,
+        "Protein": 20,
+        "Carbs": 35,
+        "Fats": 15
+    },
+    "10": {
+        "Dish_Name": "Jalebi",
+        "Calories": 150,
+        "Protein": 1,
+        "Carbs": 25,
+        "Fats": 6
+    },
+    "11": {
+        "Dish_Name": "Momos",
+        "Calories": 200,
+        "Protein": 8,
+        "Carbs": 30,
+        "Fats": 5
+    },
+    "12": {
+        "Dish_Name": "Omelette",
+        "Calories": 150,
+        "Protein": 12,
+        "Carbs": 2,
+        "Fats": 11
+    },
+    "13": {
+        "Dish_Name": "Paratha roll",
+        "Calories": 450,
+        "Protein": 18,
+        "Carbs": 50,
+        "Fats": 22
+    },
+    "14": {
+        "Dish_Name": "Pizza",
+        "Calories": 280,
+        "Protein": 12,
+        "Carbs": 35,
+        "Fats": 10
+    },
+    "15": {
+        "Dish_Name": "Samosa",
+        "Calories": 250,
+        "Protein": 4,
+        "Carbs": 24,
+        "Fats": 17
+    },
+    "16": {
+        "Dish_Name": "brownie",
+        "Calories": 350,
+        "Protein": 4,
+        "Carbs": 45,
+        "Fats": 18
+    },
+    "17": {
+        "Dish_Name": "kulfi",
+        "Calories": 200,
+        "Protein": 5,
+        "Carbs": 25,
+        "Fats": 10
+    },
+    "18": {
+        "Dish_Name": "chapati",
+        "Calories": 80,
+        "Protein": 3,
+        "Carbs": 15,
+        "Fats": 1
+    },
+    "19": {
+        "Dish_Name": "pakode",
+        "Calories": 280,
+        "Protein": 6,
+        "Carbs": 20,
+        "Fats": 20
+    }
+}

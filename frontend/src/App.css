@@ -1,0 +1,121 @@
+/* --- Google Fonts --- */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+/* Global Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Outfit', sans-serif;
+  scroll-behavior: smooth;
+}
+
+/* Selection Color */
+::selection {
+  background-color: #ff6347;
+  color: white;
+}
+
+body {
+  min-height: 100vh;
+  /* Option 1: Light & Clean (Recommended for Food Apps) */
+  background-color: #fcfcfc; 
+  
+  /* Option 2: Subtle AI Dark Feel (Charcoal Grey - Uncomment to use) */
+  /* background-color: #1a1a1a; 
+     color: #ffffff; */
+
+  color: #262626;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Main App Wrapper */
+.app {
+  width: 80%;
+  margin: auto;
+  /* Entrance Animation: Smooth & Slow for Premium Feel */
+  animation: fadeIn 1s cubic-bezier(0.2, 1, 0.2, 1);
+}
+
+/* Page Entry Animation */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Professional Custom Scrollbar --- */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ff6347;
+  border-radius: 10px;
+  transition: 0.3s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #e5533d;
+}
+
+/* --- Global Elements Styling --- */
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: 0.3s;
+}
+
+/* FYP Title Styling - Agar aap kahin headlines use karein */
+h1, h2, h3 {
+  color: #1a1a1a;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+/* Global Button Transition (Consistency for whole app) */
+button {
+  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --- Container for Page Content --- */
+/* Jab app switch hoti hai to contents ke beech thora gap professional lagta hai */
+.app > div:nth-child(2) {
+  min-height: 80vh;
+  padding-top: 40px;
+}
+
+/* --- Responsiveness --- */
+@media (max-width: 1200px) {
+  .app {
+    width: 85%;
+  }
+}
+
+@media (max-width: 1050px) {
+  .app {
+    width: 90%;
+  }
+}
+
+@media (max-width: 750px) {
+  .app {
+    width: 95%;
+    padding: 0 10px;
+  }
+  
+  /* Mobile par animations thori fast honi chahiyen */
+  .app {
+    animation-duration: 0.5s;
+  }
+}

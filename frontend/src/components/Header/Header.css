@@ -1,0 +1,145 @@
+/* Main Header Container */
+.header {
+  min-height: 42vw;
+  margin: 30px auto;
+  background: url('../../assets/header_img.png') no-repeat center center;
+  background-size: cover;
+  position: relative;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Jab Token ho (Dashboard state) - RESTORED ORIGINAL */
+.header-with-dashboard {
+  height: auto;
+  min-height: 480px;
+  padding: 30px 20px;
+  background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('../../assets/header_img.png') no-repeat center center;
+  background-size: cover;
+}
+
+.header-dashboard-overlay {
+  width: 100%;
+  z-index: 2;
+  animation: slideUp 0.8s ease-out;
+}
+
+/* UserDashboard Glass Effect - RESTORED ORIGINAL */
+.header-dashboard-overlay .user-dashboard {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-radius: 20px;
+  padding: 25px;
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  max-width: 1000px;
+  margin: 0 auto;
+  color: #ffffff;
+}
+
+.header-dashboard-overlay .user-dashboard h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #fff;
+}
+
+/* Naya Logout Content (Compact & Premium) */
+.header-logged-out {
+  min-height: 420px;
+  background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('../../assets/header_img.png') no-repeat center center;
+  background-size: cover;
+}
+
+.header-contents-wrapper {
+  padding: 0 6vw;
+  width: 100%;
+}
+
+.header-contents-glass {
+  max-width: 550px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  padding: 40px;
+  border-radius: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+  animation: slideInLeft 1s ease-out;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.header-contents-glass h2 {
+  font-weight: 800;
+  color: white;
+  font-size: 42px;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.header-contents-glass p {
+  color: #f0f0f0;
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 0;
+  opacity: 0.95;
+}
+
+.header-contents-glass button {
+  width: fit-content;
+  border: none;
+  color: #fff;
+  font-weight: 700;
+  padding: 14px 40px;
+  background-color: #ff6347;
+  font-size: 16px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 20px rgba(255, 99, 71, 0.3);
+}
+
+.header-contents-glass button:hover {
+  background-color: #fff;
+  color: #ff6347;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-50px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Responsive Fixes */
+@media(max-width:1050px) {
+  .header-contents-glass { max-width: 450px; }
+}
+
+@media(max-width:750px) {
+  .header { border-radius: 0; margin: 0; min-height: 60vw; }
+  .header-logged-out { min-height: auto; padding: 40px 20px; }
+  .header-contents-wrapper { padding: 0 15px; }
+  .header-contents-glass { padding: 30px; border-radius: 20px; width: 100%; }
+  .header-contents-glass h2 { font-size: 32px; }
+  .header-contents-glass p { font-size: 14px; }
+  .header-contents-glass button { width: 100%; }
+  .header-dashboard-overlay .user-dashboard { padding: 20px; width: 95%; }
+}

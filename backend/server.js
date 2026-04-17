@@ -20,10 +20,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 // ✅ Middleware
 app.use(express.json())
-app.use(cors({
-  origin: ["https://nutritomato-hdwl.vercel.app", "http://localhost:5173", "http://localhost:3000"],
-  credentials: true
-}))
+app.use(cors()) // Simplified for broad compatibility during deployment fix
 
 // Custom Logger (Disabled file logging for Vercel compatibility)
 app.use((req, res, next) => {

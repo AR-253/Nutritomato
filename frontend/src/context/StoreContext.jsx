@@ -9,7 +9,7 @@ const StoreContextProvider = (props) => {
   const [food_list, setFoodList] = useState([])
   const [searchTerm, setSearchTerm] = useState("");
   const [showLogin, setShowLogin] = useState(false);
-  const url = "http://localhost:4000";
+  const url = "https://nutritomato.vercel.app";
 
   const addToCart = (itemId) => {
     if (!cartItems[itemId]) {

@@ -90,9 +90,15 @@ app.use("/api/ai", aiRouter)
 
 // ✅ Test Route
 app.get("/", (req, res) => {
-  res.send("API Working")
+  res.send("NutriTomato API Working")
 })
 
-app.listen(port, () => {
-  console.log(`Server Started on http://localhost:${port}`)
-})
+// ✅ Server Listen (Only for Local Development)
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(port, () => {
+    console.log(`Server Started on http://localhost:${port}`)
+  })
+}
+
+// ✅ Export for Vercel Serverless
+export default app;

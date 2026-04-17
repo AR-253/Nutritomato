@@ -15,6 +15,11 @@ import aiRouter from "./routes/aiRoute.js"
 const app = express()
 const port = 4000
 
+// ✅ Production Health Check (Top level to bypass DB issues)
+app.get("/api/health-check", (req, res) => {
+  res.status(200).json({ success: true, message: "Server is ALIVE" });
+});
+
 // ✅ Multer Setup (AI Image handling in memory)
 const upload = multer({ storage: multer.memoryStorage() });
 

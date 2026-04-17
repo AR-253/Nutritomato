@@ -20,13 +20,15 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 // ✅ Middleware
 app.use(express.json())
-app.use(cors())
+app.use(cors({
+  origin: ["https://nutritomato-hdwl.vercel.app", "http://localhost:5173", "http://localhost:3000"],
+  credentials: true
+}))
 
-// Custom Logger
+// Custom Logger (Disabled file logging for Vercel compatibility)
 app.use((req, res, next) => {
-    const logEntry = `[${new Date().toLocaleTimeString()}] ${req.method} ${req.url} - ${req.headers.token ? "Token Present" : "No Token"}\n`;
-    fs.appendFileSync('access.log', logEntry);
-    console.log(logEntry.trim());
+    const logEntry = `[${new Date().toLocaleTimeString()}] ${req.method} ${req.url}`;
+    console.log(logEntry);
     next();
 });
 

@@ -24,10 +24,10 @@ app.use(cors())
 
 // Custom Logger
 app.use((req, res, next) => {
-  const logEntry = `[${new Date().toLocaleTimeString()}] ${req.method} ${req.url} - ${req.headers.token ? "Token Present" : "No Token"}\n`;
-  fs.appendFileSync('access.log', logEntry);
-  console.log(logEntry.trim());
-  next();
+    const logEntry = `[${new Date().toLocaleTimeString()}] ${req.method} ${req.url} - ${req.headers.token ? "Token Present" : "No Token"}\n`;
+    fs.appendFileSync('access.log', logEntry);
+    console.log(logEntry.trim());
+    next();
 });
 
 // ✅ Serve uploaded images publicly
@@ -70,10 +70,10 @@ app.post("/api/food/predict-nutrition", upload.single('image'), async (req, res)
 
     } catch (error) {
         console.error("AI Service Error:", error.message);
-        res.status(500).json({ 
-            success: false, 
+        res.status(500).json({
+            success: false,
             message: "AI Server is not responding. Make sure Flask is running on port 5000.",
-            error: error.message 
+            error: error.message
         });
     }
 });

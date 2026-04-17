@@ -111,5 +111,11 @@ if (process.env.NODE_ENV !== 'production') {
   })
 }
 
+// ✅ Global Error Handler (FOR DEBUGGING VERCEL 500)
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ success: false, message: "Server Crash!", error: err.message });
+});
+
 // ✅ Export for Vercel Serverless
 export default app;

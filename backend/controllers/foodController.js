@@ -1,11 +1,13 @@
+import { v2 as cloudinary } from 'cloudinary';
 import foodModel from "../models/foodModel.js";
-import fs from "fs";
-import path from "path";
 import { original_foods } from "./restore_data.js";
 
 // Add food item
 const addFood = async (req, res) => {
-  let image_filename = `${req.file.filename}`;
+  // Check if req.file exists (added by multer-storage-cloudinary)
+  if (!req.file) {
+    return res.json({ success: false, message: "Image upload failed" });
+  }
 
   const food = new foodModel({
     name: req.body.name,
@@ -16,7 +18,7 @@ const addFood = async (req, res) => {
     protein: req.body.protein,
     carbs: req.body.carbs,
     fats: req.body.fats,
-    image: image_filename,
+    image: req.file.path, // Cloudinary provides the full secure URL here
   });
 
   try {
@@ -47,10 +49,12 @@ const removeFood = async (req, res) => {
       return res.json({ success: false, message: "Food not found" });
     }
 
-    // Delete image file from uploads folder
-    fs.unlink(`uploads/${food.image}`, (err) => {
-      if (err) console.log("Error deleting image:", err);
-    });
+    // Delete image from Cloudinary if it's a cloud link
+    if (food.image.includes("cloudinary.com")) {
+      const publicId = food.image.split('/').pop().split('.')[0];
+      const folderPath = "nutritomato_foods/";
+      await cloudinary.uploader.destroy(folderPath + publicId);
+    }
 
     await foodModel.findByIdAndDelete(req.body.id);
     res.json({ success: true, message: "Food Removed Successfully" });
@@ -242,15 +246,15 @@ const updateFood = async (req, res) => {
       return res.json({ success: false, message: "Food not found" });
     }
 
-    let image_filename = food.image;
+    let image_url = food.image;
     if (req.file) {
-      // Delete old image only if it's not a generic seeded image (optional check)
-      if (fs.existsSync(`uploads/${food.image}`)) {
-        fs.unlink(`uploads/${food.image}`, (err) => {
-           if (err) console.log("Error deleting old image:", err);
-        });
+      // If there's an old Cloudinary image, delete it
+      if (food.image.includes("cloudinary.com")) {
+        const publicId = food.image.split('/').pop().split('.')[0];
+        const folderPath = "nutritomato_foods/";
+        await cloudinary.uploader.destroy(folderPath + publicId);
       }
-      image_filename = req.file.filename;
+      image_url = req.file.path; // New Cloudinary URL
     }
 
     await foodModel.findByIdAndUpdate(id, {
@@ -262,7 +266,7 @@ const updateFood = async (req, res) => {
       protein: Number(protein),
       carbs: Number(carbs),
       fats: Number(fats),
-      image: image_filename
+      image: image_url
     });
 
     res.json({ success: true, message: "Food Updated Successfully" });

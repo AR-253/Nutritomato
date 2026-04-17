@@ -4,14 +4,12 @@ import { addFood, listFood, removeFood, seedDatabase } from "../controllers/food
 
 const foodRouter = express.Router();
 
-// 📸 Image storage engine
-const storage = multer.diskStorage({
-  destination: "uploads",
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}_${file.originalname}`);
-  },
-});
+import { storage } from "../config/cloudinary.js";
+import { addFood, listFood, removeFood, seedDatabase, updateFood } from "../controllers/foodController.js";
 
+const foodRouter = express.Router();
+
+// 📸 Cloudinary storage engine (Updated for Deployment)
 const upload = multer({ storage: storage });
 
 // 🧾 Routes

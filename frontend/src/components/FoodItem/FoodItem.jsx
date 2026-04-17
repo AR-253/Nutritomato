@@ -12,7 +12,7 @@ const FoodItem = ({ id, name, price, description, image, calories, protein, carb
   return (
     <div className="food-item">
       <div className="food-item-image-container">
-        <img className="food-item-image" src={url + "/uploads/" + image} alt="" />
+        <img className="food-item-image" src={image.startsWith('http') ? image : url + "/uploads/" + image} alt="" />
 
         {!cartItems[id] ? (
           <img

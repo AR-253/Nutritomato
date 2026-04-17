@@ -84,7 +84,7 @@ const List = ({ url }) => {
               <tr key={index}>
                 <td className="img-cell">
                   <div className="table-img-box">
-                    <img src={`${url}/uploads/${item.image}`} alt={item.name} />
+                    <img src={item.image.startsWith('http') ? item.image : `${url}/uploads/${item.image}`} alt={item.name} />
                   </div>
                 </td>
                 <td className="name-cell">

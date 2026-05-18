@@ -17,6 +17,14 @@ const UserDashboard = () => {
             if (!token) return;
 
             try {
+                const now = Date.now();
+                if (window.__dashboardCache && (now - window.__dashboardCache.time) < 60000) {
+                    setSummary(window.__dashboardCache.summary);
+                    setData(window.__dashboardCache.data);
+                    setLoading(false);
+                    return;
+                }
+
                 console.log("[UserDashboard] Fetching data...");
 
                 // 1. Fetch Diet History (Manual Logs) instead of Orders
@@ -86,14 +94,19 @@ const UserDashboard = () => {
                 // 4. Prepare Data for Chart
                 const monthlyTarget = dailyTarget * 30;
 
-                setSummary({ intake: totalIntake, target: monthlyTarget, isPersonalized, dailyTarget, todayIntake, macros, totalMacros, todayMacros });
-                setData([
+                const newSummary = { intake: totalIntake, target: monthlyTarget, isPersonalized, dailyTarget, todayIntake, macros, totalMacros, todayMacros };
+                const newData = [
                     {
                         name: 'Last 30 Days',
                         Intake: totalIntake,
                         Target: monthlyTarget,
                     },
-                ]);
+                ];
+
+                window.__dashboardCache = { time: Date.now(), summary: newSummary, data: newData };
+                
+                setSummary(newSummary);
+                setData(newData);
                 setLoading(false);
 
             } catch (error) {

@@ -108,6 +108,9 @@ const DietPlanner = () => {
             try {
                 await axios.post(url + "/api/diet/save", { userInfo, plan: newPlan, mealPlan: [] }, { headers: { token } });
                 setGoal(userInfo.goal); // Update global context goal
+                // Invalidate caches to force a fresh fetch
+                window.__dashboardCache = null;
+                window.__plannerCache = null;
             } catch (error) {
                 console.error("[DietPlanner] Error saving:", error);
             }
@@ -132,6 +135,9 @@ Ensure strictly JSON output with the 'mealPlan' array. (Request ID: ${Date.now()
                 // Save it to backend
                 if (token) {
                     await axios.post(url + "/api/diet/save", { userInfo, plan, mealPlan: response.data.mealPlan }, { headers: { token } });
+                    // Invalidate caches since we saved new data
+                    window.__dashboardCache = null;
+                    window.__plannerCache = null;
                 }
             } else {
                 const errorMsg = response.data.error ? `${response.data.message} (${response.data.error})` : response.data.message;
@@ -175,9 +181,33 @@ Ensure strictly JSON output with the 'mealPlan' array. (Request ID: ${Date.now()
         if (token) {
             const fetchPlan = async () => {
                 try {
+                    const now = Date.now();
+                    if (window.__plannerCache && (now - window.__plannerCache.time) < 60000) {
+                        const savedData = window.__plannerCache.data;
+                        setUserInfo(savedData.userInfo);
+                        setPlan(savedData.plan);
+                        if (savedData.mealPlan && savedData.mealPlan.length > 0) {
+                            setMealPlanData(savedData.mealPlan);
+                        }
+                        const u = savedData.userInfo;
+                        const hM = u.height / 100;
+                        const bV = (u.weight / (hM * hM)).toFixed(1);
+                        let bS = "";
+                        if (bV < 18.5) bS = "Underweight";
+                        else if (bV < 25) bS = "Normal";
+                        else if (bV < 30) bS = "Overweight";
+                        else if (bV < 35) bS = "Obese";
+                        else bS = "Extremely Obese";
+                        setBmi({ value: bV, status: bS });
+                        return;
+                    }
+
                     const response = await axios.post(url + "/api/diet/get", {}, { headers: { token } });
                     if (response.data.success) {
                         const savedData = response.data.data;
+                        
+                        window.__plannerCache = { time: Date.now(), data: savedData };
+
                         setUserInfo(savedData.userInfo);
                         setPlan(savedData.plan);
                         if (savedData.mealPlan && savedData.mealPlan.length > 0) {

@@ -4,7 +4,6 @@
     min-height: calc(100vh - 80px); /* Height minus navbar */
     display: flex;
     flex-direction: column;
-    overflow: hidden; /* No scroll */
     font-family: 'Outfit', sans-serif;
 }
 
@@ -29,7 +28,6 @@
     gap: 30px;
     flex: 1;
     align-items: stretch;
-    max-height: 80vh;
 }
 
 /* Left Side: Setup Box */
@@ -252,11 +250,29 @@
 .macro-card.carbs { background: #f5fff5; border: 1px solid #e2ffe2; }
 .macro-card.fats { background: #fffdf0; border: 1px solid #fff9e0; }
 
+.plan-badge-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.selected-plan-badge {
+    font-size: 10px;
+    background: #ff6347;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
 .card-label {
     font-size: 12px;
     color: #888;
     font-weight: 600;
-    margin-bottom: 5px;
 }
 
 .card-value {
@@ -270,6 +286,243 @@
     color: #aaa;
 }
 
+/* Options Dashboard */
+.options-dashboard {
+    animation: fadeIn 0.5s ease;
+}
+
+.options-dashboard h3 {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.option-item {
+    display: flex;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    background: white;
+}
+
+.option-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.option-left {
+    flex: 1.5;
+    background: #f4f5f7;
+    padding: 15px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-right: 1px solid #e0e0e0;
+}
+
+.option-left h4 {
+    font-size: 18px;
+    color: #333;
+    margin: 0 0 4px 0;
+}
+
+.option-left p {
+    font-size: 13px;
+    color: #777;
+    margin: 0;
+}
+
+.option-right {
+    flex: 1;
+    background: #f1f8e9; /* Light green */
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+/* Removed triangle pointer to match reference image cleanly */
+
+.opt-cal-value {
+    font-size: 24px;
+    font-weight: 800;
+    color: #2e7d32; /* Dark green */
+}
+
+.opt-cal-details {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-top: 4px;
+}
+
+.opt-cal-label {
+    font-size: 12px;
+    color: #777;
+}
+
+.opt-percent {
+    font-size: 12px;
+    font-weight: 700;
+    color: #555;
+}
+
+.fadeIn {
+    animation: fadeIn 0.4s ease forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* AI Meal Plan Section */
+.meal-plan-section.full-width-plan {
+    margin-top: 40px;
+    padding: 30px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    border: 1px solid #f0f0f0;
+    width: 100%;
+}
+
+.meal-plan-prompt {
+    text-align: center;
+    background: #fdfbf7;
+    padding: 20px;
+    border-radius: 15px;
+    border: 1px solid #f5edd8;
+}
+
+.meal-plan-prompt p {
+    color: #555;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.generate-plan-btn, .regen-btn {
+    background: linear-gradient(135deg, #7b61ff, #5a3ce8);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.generate-plan-btn:hover:not(:disabled), .regen-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(123, 97, 255, 0.3);
+}
+
+.generate-plan-btn:disabled, .regen-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.regen-btn {
+    padding: 8px 16px;
+    font-size: 12px;
+    background: #f1f3f5;
+    color: #555;
+}
+.regen-btn:hover:not(:disabled) {
+    background: #e2e6ea;
+    box-shadow: none;
+}
+
+.meal-plan-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.meal-plan-header h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+}
+
+.meal-plan-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.meal-item-card {
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 15px;
+    transition: transform 0.2s;
+}
+
+.meal-item-card:hover {
+    transform: translateX(5px);
+    border-color: #7b61ff;
+}
+
+.meal-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.meal-type-badge {
+    background: #f0edff;
+    color: #5a3ce8;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.meal-cals {
+    font-weight: 800;
+    color: #333;
+    font-size: 14px;
+}
+
+.meal-food {
+    color: #555;
+    font-size: 14px;
+    margin: 0 0 10px 0;
+    line-height: 1.4;
+}
+
+.meal-item-macros {
+    display: flex;
+    gap: 15px;
+    font-size: 12px;
+    color: #888;
+    background: #fafafa;
+    padding: 8px;
+    border-radius: 8px;
+}
+
+.meal-item-macros span {
+    font-weight: 600;
+}
+
 /* Responsiveness */
 @media (max-width: 1100px) {
     .planner-container {
@@ -279,5 +532,31 @@
     }
     .diet-planner-page {
         overflow-y: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .diet-planner-page {
+        padding: 20px 15px;
+    }
+    .input-grid {
+        grid-template-columns: 1fr;
+    }
+    .macro-cards {
+        grid-template-columns: 1fr;
+    }
+    .planner-header h2 {
+        font-size: 22px;
+    }
+    .gauge-wrapper {
+        width: 100%;
+        max-width: 250px;
+    }
+    .option-item {
+        flex-direction: column;
+    }
+    .option-left {
+        border-right: none;
+        border-bottom: 1px solid #e0e0e0;
     }
 }

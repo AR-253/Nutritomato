@@ -69,13 +69,17 @@ def predict():
         input_tensor = transform_image(img_bytes)
         with torch.no_grad():
             outputs = model(input_tensor)
-            _, predicted = torch.max(outputs, 1)
+            probabilities = torch.nn.functional.softmax(outputs[0], dim=0)
+            confidence, predicted = torch.max(probabilities, 0)
             prediction_id = str(predicted.item())
+            confidence_score = float(confidence.item()) * 100
 
         # Retrieve nutrition details from our JSON mapping
         result = label_mapping.get(prediction_id)
 
         if result:
+            # Add confidence to the result
+            result['confidence_score'] = confidence_score
             return jsonify({
                 "status": "success",
                 "prediction": result
@@ -92,5 +96,6 @@ def health_check():
     return jsonify({"message": "AI Food Recognition Service is Live!"})
 
 if __name__ == '__main__':
-    print("Starting AI Service on http://localhost:5000...")
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    port = int(os.environ.get('PORT', 7860))
+    print(f"Starting AI Service on port {port}...")
+    app.run(host='0.0.0.0', port=port)

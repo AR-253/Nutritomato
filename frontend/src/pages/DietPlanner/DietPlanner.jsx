@@ -4,7 +4,7 @@ import { StoreContext } from '../../context/StoreContext';
 import axios from 'axios';
 
 const DietPlanner = () => {
-    const { url, token } = useContext(StoreContext);
+    const { url, token, setGoal } = useContext(StoreContext);
     const [userInfo, setUserInfo] = useState({
         age: '',
         gender: 'Male',
@@ -14,6 +14,16 @@ const DietPlanner = () => {
         goal: 'Maintain'
     });
     const [plan, setPlan] = useState(null);
+    const [calculatedOptions, setCalculatedOptions] = useState(null);
+    const [mealPlanData, setMealPlanData] = useState(null);
+    const [loadingMeals, setLoadingMeals] = useState(false);
+    const [loadingMsgIdx, setLoadingMsgIdx] = useState(0);
+    const loadingMessages = [
+        "Analyzing macros...",
+        "Searching recipes...",
+        "Balancing nutrition...",
+        "Finalizing plan..."
+    ];
     const [bmi, setBmi] = useState(null);
     const [animatedRotation, setAnimatedRotation] = useState(-90); // Needle start position
 
@@ -42,16 +52,29 @@ const DietPlanner = () => {
             default: tdee = bmr * 1.2;
         }
 
-        let targetCalories = tdee;
-        if (userInfo.goal === 'Lose') targetCalories -= 500;
-        if (userInfo.goal === 'Gain') targetCalories += 500;
+        // Generate Options based on Goal
+        let options = [];
+        const baseTdee = Math.round(tdee);
 
-        const newPlan = {
-            calories: Math.round(targetCalories),
-            protein: Math.round((targetCalories * 0.3) / 4),
-            carbs: Math.round((targetCalories * 0.4) / 4),
-            fats: Math.round((targetCalories * 0.3) / 9)
-        };
+        if (userInfo.goal === 'Lose') {
+            options = [
+                { title: "Maintain weight", subtitle: "", calories: baseTdee, percent: "100%" },
+                { title: "Mild weight loss", subtitle: "0.5 lb/week", calories: baseTdee - 250, percent: "90%" },
+                { title: "Weight loss", subtitle: "1 lb/week", calories: baseTdee - 500, percent: "80%" },
+                { title: "Extreme weight loss", subtitle: "2 lb/week", calories: baseTdee - 1000, percent: "61%" }
+            ];
+        } else if (userInfo.goal === 'Gain') {
+            options = [
+                { title: "Maintain weight", subtitle: "", calories: baseTdee, percent: "100%" },
+                { title: "Mild weight gain", subtitle: "0.5 lb/week", calories: baseTdee + 250, percent: "110%" },
+                { title: "Weight gain", subtitle: "1 lb/week", calories: baseTdee + 500, percent: "120%" },
+                { title: "Fast weight gain", subtitle: "2 lb/week", calories: baseTdee + 1000, percent: "139%" }
+            ];
+        } else {
+            options = [
+                { title: "Maintain weight", subtitle: "Current TDEE", calories: baseTdee, percent: "100%" }
+            ];
+        }
 
         // BMI Logic
         const heightInMeters = userInfo.height / 100;
@@ -64,16 +87,89 @@ const DietPlanner = () => {
         else bmiStatus = "Extremely Obese";
 
         setBmi({ value: bmiValue, status: bmiStatus });
+        setCalculatedOptions(options);
+        setPlan(null); // Clear active plan to show options
+    };
+
+    const handleOptionSelect = async (opt) => {
+        const newPlan = {
+            title: opt.title,
+            calories: opt.calories,
+            protein: Math.round((opt.calories * 0.3) / 4),
+            carbs: Math.round((opt.calories * 0.4) / 4),
+            fats: Math.round((opt.calories * 0.3) / 9)
+        };
+
         setPlan(newPlan);
+        setCalculatedOptions(null);
+        setMealPlanData(null); // Clear old meal plan
 
         if (token) {
             try {
-                await axios.post(url + "/api/diet/save", { userInfo, plan: newPlan }, { headers: { token } });
+                await axios.post(url + "/api/diet/save", { userInfo, plan: newPlan, mealPlan: [] }, { headers: { token } });
+                setGoal(userInfo.goal); // Update global context goal
             } catch (error) {
                 console.error("[DietPlanner] Error saving:", error);
             }
         }
     };
+
+    const generateMealPlan = async () => {
+        if (!plan) return;
+        setLoadingMeals(true);
+        try {
+            const formData = new FormData();
+            formData.append("prompt", `Generate a 1-day meal plan for exactly ${plan.calories} kcal (${plan.protein}g protein, ${plan.carbs}g carbs, ${plan.fats}g fats). Distribute across Breakfast, Lunch, Dinner, and Snacks.
+CRITICAL INSTRUCTION: The 'food' field for each meal MUST explicitly list the exact weight in grams for EVERY single ingredient. 
+BAD EXAMPLE: "Grilled Chicken with Brown Rice"
+GOOD EXAMPLE: "150g Grilled Chicken + 200g Brown Rice + 100g Broccoli"
+If you fail to include the gram amounts in the 'food' string, the system will crash.
+Ensure strictly JSON output with the 'mealPlan' array. (Request ID: ${Date.now()})`);
+            
+            const response = await axios.post(`${url}/api/ai/chat`, formData);
+            if (response.data.success && response.data.mealPlan && response.data.mealPlan.length > 0) {
+                setMealPlanData(response.data.mealPlan);
+                // Save it to backend
+                if (token) {
+                    await axios.post(url + "/api/diet/save", { userInfo, plan, mealPlan: response.data.mealPlan }, { headers: { token } });
+                }
+            } else {
+                const errorMsg = response.data.error ? `${response.data.message} (${response.data.error})` : response.data.message;
+                alert(errorMsg || "Could not generate plan. Please try again.");
+            }
+        } catch (error) {
+            console.error("Error generating meal plan:", error);
+            alert(`Error connecting to AI service: ${error.message}`);
+        } finally {
+            setLoadingMeals(false);
+        }
+    };
+
+    useEffect(() => {
+        let interval;
+        if (loadingMeals) {
+            interval = setInterval(() => {
+                setLoadingMsgIdx(prev => (prev + 1) % loadingMessages.length);
+            }, 1000); // 1 sec updates
+        } else {
+            setLoadingMsgIdx(0);
+        }
+        return () => clearInterval(interval);
+    }, [loadingMeals]);
+
+    // Auto-scroll logic when coming from AI Assistant
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('scrollTo') === 'meal-plan') {
+            // Wait slightly for the data to be ready/rendered
+            setTimeout(() => {
+                const section = document.getElementById('meal-plan-section');
+                if (section) {
+                    section.scrollIntoView({ behavior: 'smooth' });
+                }
+            }, 500);
+        }
+    }, [window.location.search]);
 
     useEffect(() => {
         if (token) {
@@ -84,6 +180,9 @@ const DietPlanner = () => {
                         const savedData = response.data.data;
                         setUserInfo(savedData.userInfo);
                         setPlan(savedData.plan);
+                        if (savedData.mealPlan && savedData.mealPlan.length > 0) {
+                            setMealPlanData(savedData.mealPlan);
+                        }
                         
                         // Recalculate BMI display
                         const u = savedData.userInfo;
@@ -96,6 +195,7 @@ const DietPlanner = () => {
                         else if (bV < 35) bS = "Obese";
                         else bS = "Extremely Obese";
                         setBmi({ value: bV, status: bS });
+                        setGoal(savedData.userInfo.goal); // Sync global goal on fetch
                     }
                 } catch (error) {
                     console.error("[DietPlanner] Fetch Error:", error);
@@ -178,7 +278,7 @@ const DietPlanner = () => {
 
                 {/* Right Side: Results Display */}
                 <div className="result-box">
-                    {!plan ? (
+                    {!plan && !calculatedOptions ? (
                         <div className="empty-state">
                             <div className="empty-icon">📊</div>
                             <p>Fill in your details to see your status and diet plan</p>
@@ -207,8 +307,8 @@ const DietPlanner = () => {
                                     </svg>
                                     <div className="bmi-value-display">
                                         <span className="bmi-label">Your BMI</span>
-                                        <span className="bmi-number">{bmi.value}</span>
-                                        <span className={`bmi-status ${bmi.status.toLowerCase().replace(' ', '-')}`}>{bmi.status}</span>
+                                        <span className="bmi-number">{bmi?.value}</span>
+                                        <span className={`bmi-status ${bmi?.status.toLowerCase().replace(' ', '-')}`}>{bmi?.status}</span>
                                     </div>
                                 </div>
                                 <div className="gauge-labels">
@@ -219,36 +319,105 @@ const DietPlanner = () => {
                                 </div>
                             </div>
 
-                            {/* Macro Cards Section */}
-                            <div className="macro-dashboard">
-                                <h3>Target Daily Intake</h3>
-                                <div className="macro-cards">
-                                    <div className="macro-card calories">
-                                        <span className="card-label">Calories</span>
-                                        <span className="card-value">{plan.calories}</span>
-                                        <span className="card-unit">kcal</span>
-                                    </div>
-                                    <div className="macro-card protein">
-                                        <span className="card-label">Protein</span>
-                                        <span className="card-value">{plan.protein}</span>
-                                        <span className="card-unit">grams</span>
-                                    </div>
-                                    <div className="macro-card carbs">
-                                        <span className="card-label">Carbs</span>
-                                        <span className="card-value">{plan.carbs}</span>
-                                        <span className="card-unit">grams</span>
-                                    </div>
-                                    <div className="macro-card fats">
-                                        <span className="card-label">Fats</span>
-                                        <span className="card-value">{plan.fats}</span>
-                                        <span className="card-unit">grams</span>
+                            {/* Options View */}
+                            {calculatedOptions && !plan && (
+                                <div className="options-dashboard fadeIn">
+                                    <h3>Select Your Target Plan</h3>
+                                    <div className="options-list">
+                                        {calculatedOptions.map((opt, index) => (
+                                            <div key={index} className="option-item" onClick={() => handleOptionSelect(opt)}>
+                                                <div className="option-left">
+                                                    <h4>{opt.title}</h4>
+                                                    {opt.subtitle && <p>{opt.subtitle}</p>}
+                                                </div>
+                                                <div className="option-right">
+                                                    <div className="opt-cal-value">{opt.calories}</div>
+                                                    <div className="opt-cal-details">
+                                                        <span className="opt-cal-label">Calories/day</span>
+                                                        <span className="opt-percent">{opt.percent}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
-                            </div>
+                            )}
+
+                            {/* Macro Cards Section */}
+                            {plan && (
+                                <div className="macro-dashboard fadeIn">
+                                    <h3>Target Daily Intake</h3>
+                                    <div className="macro-cards">
+                                        <div className="macro-card calories">
+                                            <div className="plan-badge-row">
+                                                <span className="card-label">Calories</span>
+                                                {plan.title && <span className="selected-plan-badge">{plan.title}</span>}
+                                            </div>
+                                            <span className="card-value">{plan.calories}</span>
+                                            <span className="card-unit">kcal</span>
+                                        </div>
+                                        <div className="macro-card protein">
+                                            <span className="card-label">Protein</span>
+                                            <span className="card-value">{plan.protein}</span>
+                                            <span className="card-unit">grams</span>
+                                        </div>
+                                        <div className="macro-card carbs">
+                                            <span className="card-label">Carbs</span>
+                                            <span className="card-value">{plan.carbs}</span>
+                                            <span className="card-unit">grams</span>
+                                        </div>
+                                        <div className="macro-card fats">
+                                            <span className="card-label">Fats</span>
+                                            <span className="card-value">{plan.fats}</span>
+                                            <span className="card-unit">grams</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
                         </div>
                     )}
                 </div>
             </div>
+
+            {/* AI Meal Plan Generator Section (Moved to Bottom) */}
+            {plan && (
+                <div id="meal-plan-section" className="meal-plan-section fadeIn full-width-plan">
+                    {!mealPlanData || mealPlanData.length === 0 ? (
+                        <div className="meal-plan-prompt">
+                            <p>Want a personalized diet plan based on these calories?</p>
+                            <button className="generate-plan-btn" onClick={generateMealPlan} disabled={loadingMeals}>
+                                {loadingMeals ? `🤖 ${loadingMessages[loadingMsgIdx]}` : "✨ Generate AI Diet Plan"}
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="meal-plan-display">
+                            <div className="meal-plan-header">
+                                <h3>Your Daily Meal Plan</h3>
+                                <button className="regen-btn" onClick={generateMealPlan} disabled={loadingMeals}>
+                                    {loadingMeals ? `🔄 ${loadingMessages[loadingMsgIdx]}` : "🔄 Regenerate"}
+                                </button>
+                            </div>
+                            <div className="meal-plan-list">
+                                {mealPlanData.map((meal, index) => (
+                                    <div key={index} className="meal-item-card">
+                                        <div className="meal-item-header">
+                                            <span className="meal-type-badge">{meal.meal}</span>
+                                            <span className="meal-cals">{meal.calories} kcal</span>
+                                        </div>
+                                        <p className="meal-food">{meal.food}</p>
+                                        <div className="meal-item-macros">
+                                            <span>P: {meal.protein}g</span>
+                                            <span>C: {meal.carbs}g</span>
+                                            <span>F: {meal.fats}g</span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
     );
 };

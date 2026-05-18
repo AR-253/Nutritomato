@@ -1,11 +1,7 @@
 import express from "express";
 import multer from "multer";
-import { addFood, listFood, removeFood, seedDatabase } from "../controllers/foodController.js";
-
-const foodRouter = express.Router();
-
-import { storage } from "../config/cloudinary.js";
 import { addFood, listFood, removeFood, seedDatabase, updateFood } from "../controllers/foodController.js";
+import { storage } from "../config/cloudinary.js";
 
 const foodRouter = express.Router();
 

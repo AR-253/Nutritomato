@@ -85,3 +85,21 @@ hr {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* Responsiveness */
+@media (max-width: 900px) {
+  .page-content {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 600px) {
+  .app-content {
+    flex-direction: column;
+    height: calc(100vh - 72px);
+  }
+  .page-content {
+    padding: 15px;
+    padding-bottom: 90px; /* Space for bottom navbar */
+  }
+}

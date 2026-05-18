@@ -245,10 +245,18 @@
 
 /* Mobile Responsive */
 @media (max-width: 768px) {
-    .daily-main-stats { grid-template-columns: 1fr; }
-    .daily-macros-grid { grid-template-columns: 1fr; }
-    .monthly-stats-row { grid-template-columns: 1fr; }
+    .user-dashboard { padding: 10px; gap: 15px; }
+    .daily-main-stats { grid-template-columns: 1fr; gap: 15px; }
+    .daily-macros-grid { grid-template-columns: 1fr; gap: 10px; }
+    .monthly-stats-row { grid-template-columns: 1fr; gap: 10px; }
     .monthly-content-grid { grid-template-columns: 1fr; }
     .dashboard-header { flex-direction: column; align-items: flex-start; gap: 15px; }
     .view-toggle { width: 100%; justify-content: space-around; }
+    
+    .dashboard-title h2 { font-size: 20px; }
+    .gauge-section { padding: 15px; }
+    .gauge-text h3 { font-size: 24px; }
+    
+    .macro-card { padding: 12px; }
+    .card-top h4, .card-top span { font-size: 14px; }
 }

@@ -19,7 +19,7 @@ const AIPlanner = () => {
 
     // Manual Log State
     const [showManualLog, setShowManualLog] = useState(false);
-    const [manualEntry, setManualEntry] = useState({ name: '', calories: '', protein: '', fats: '', carbs: '' });
+    const [manualEntry, setManualEntry] = useState({ name: '', calories: '', protein: '', fats: '', carbs: '', mealType: 'Breakfast' });
 
     const messagesEndRef = useRef(null);
     const fileInputRef = useRef(null);
@@ -72,6 +72,7 @@ const AIPlanner = () => {
                     fats: parseInt(fats) || 0,
                     carbs: parseInt(carbs) || 0,
                     foodName: name,
+                    mealType: manualEntry.mealType || 'Breakfast',
                     type
                 },
                 { headers: { token } }
@@ -80,7 +81,7 @@ const AIPlanner = () => {
             if (response.data.success) {
                 alert(`Successfully logged: ${name}`);
                 setShowManualLog(false);
-                setManualEntry({ name: '', calories: '', protein: '', fats: '', carbs: '' });
+                setManualEntry({ name: '', calories: '', protein: '', fats: '', carbs: '', mealType: 'Breakfast' });
             } else {
                 alert("Failed to log: " + response.data.message);
             }
@@ -126,7 +127,7 @@ const AIPlanner = () => {
                         foodName: data.Dish_Name
                     }]);
                 } else {
-                    setMessages(prev => [...prev, { role: 'ai', content: "Sorry, I couldn't identify this food using the local model." }]);
+                    setMessages(prev => [...prev, { role: 'ai', content: `Sorry, I couldn't identify this food. [Detail: ${response.data.message || 'Unknown Error'}]` }]);
                 }
             } else {
                 // ✅ USE GEMINI FOR TEXT-ONLY CHAT
@@ -145,7 +146,7 @@ const AIPlanner = () => {
                         protein: response.data.protein,
                         fats: response.data.fats,
                         carbs: response.data.carbs,
-                        foodName: "Analyzed Food"
+                        foodName: response.data.foodName || "Analyzed Food"
                     }]);
                 } else {
                     setMessages(prev => [...prev, { role: 'ai', content: "Error: " + response.data.message }]);
@@ -196,13 +197,25 @@ const AIPlanner = () => {
                                         </div>
                                     </div>
                                     <div className="macro-info-row">
-                                        <span>🥩 {msg.protein || 0}g</span>
-                                        <span>🥑 {msg.fats || 0}g</span>
-                                        <span>🍞 {msg.carbs || 0}g</span>
+                                        <span>{msg.protein || 0}g</span>
+                                        <span>{msg.fats || 0}g</span>
+                                        <span>{msg.carbs || 0}g</span>
                                     </div>
-                                    <button className="quick-log-btn" onClick={() => logFood(msg.foodName, msg.calories, msg.protein, msg.fats, msg.carbs, 'ai')}>
-                                        + Add to Log
-                                    </button>
+                                    <div className="quick-log-actions">
+                                        <select className="meal-select-mini" id={`meal-select-${index}`}>
+                                            <option value="Breakfast">Breakfast</option>
+                                            <option value="Lunch">Lunch</option>
+                                            <option value="Dinner">Dinner</option>
+                                            <option value="Snack">Snack</option>
+                                        </select>
+                                        <button className="quick-log-btn" onClick={() => {
+                                            const mType = document.getElementById(`meal-select-${index}`).value;
+                                            setManualEntry(prev => ({...prev, mealType: mType}));
+                                            logFood(msg.foodName, msg.calories, msg.protein, msg.fats, msg.carbs, 'ai');
+                                        }}>
+                                            + Add to Log
+                                        </button>
+                                    </div>
                                 </div>
                             )}
                         </div>
@@ -256,6 +269,12 @@ const AIPlanner = () => {
                     <div className="manual-log-modal">
                         <h3>Log Food Manually</h3>
                         <input type="text" placeholder="Food Name" value={manualEntry.name} onChange={(e) => setManualEntry({ ...manualEntry, name: e.target.value })} />
+                        <select value={manualEntry.mealType} onChange={(e) => setManualEntry({ ...manualEntry, mealType: e.target.value })}>
+                            <option value="Breakfast">Breakfast</option>
+                            <option value="Lunch">Lunch</option>
+                            <option value="Dinner">Dinner</option>
+                            <option value="Snack">Snack</option>
+                        </select>
                         <input type="number" placeholder="Calories" value={manualEntry.calories} onChange={(e) => setManualEntry({ ...manualEntry, calories: e.target.value })} />
                         <div className="modal-macros-row">
                             <input type="number" placeholder="Protein" value={manualEntry.protein} onChange={(e) => setManualEntry({ ...manualEntry, protein: e.target.value })} />

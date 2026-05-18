@@ -97,13 +97,14 @@ const MyOrders = () => {
                     fats: consumedFats,
                     carbs: consumedCarbs,
                     orderId: selectedOrder._id,
-                    foodName: foodName
+                    foodName: foodName,
+                    date: selectedOrder.date // Sync with order date
                 },
                 { headers: { token } }
             );
 
             if (response.data.success) {
-                alert(`Logged order consumption: ${percentage}%!`);
+                alert(`Logged order consumption for ${new Date(selectedOrder.date).toLocaleDateString()}: ${percentage}%!`);
                 await fetchOrders(); // Refresh data to show "Update" button
             } else {
                 alert("Failed to log consumption: " + response.data.message);
@@ -129,29 +130,36 @@ const MyOrders = () => {
         <div className='my-orders'>
             <h2>My Orders</h2>
             <div className="container">
-                {data.map((order, index) => {
+                {Array.isArray(data) && data.map((order, index) => {
                     return (
                         <div key={index} className='my-orders-order'>
                             <img src={assets.parcel_icon} alt="" />
-                            <p>{order.items.map((item, index) => {
-                                if (index === order.items.length - 1) {
-                                    return item.name + " x " + item.quantity
-                                }
-                                else {
-                                    return item.name + " x " + item.quantity + ", "
-                                }
-                            })}</p>
-                            <p>Rs. {order.amount}.00</p>
-                            <p>Items: {order.items.length}</p>
-                            <p><span>&#x25cf;</span> <b>{order.status}</b></p>
+                            <div className="order-details">
+                                <p className='order-items'>{order.items && order.items.map((item, index) => {
+                                    if (index === order.items.length - 1) {
+                                        return item.name + " x " + item.quantity
+                                    }
+                                    else {
+                                        return item.name + " x " + item.quantity + ", "
+                                    }
+                                })}</p>
+                                <p className='order-meta'>
+                                    <span className='date'>{new Date(order.date).toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' })}</span>
+                                    <span className='time'>{new Date(order.date).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}</span>
+                                </p>
+                            </div>
+                            <p className='order-amount'>Rs. {order.amount}.00</p>
+                            <p className='order-count'>Items: {order.items ? order.items.length : 0}</p>
+                            <p className='order-status'><span>&#x25cf;</span> <b>{order.status}</b></p>
                             {order.status === "Delivered" && (
-                                <button onClick={() => handleEatClick(order)}>
+                                <button className='eat-btn' onClick={() => handleEatClick(order)}>
                                     {order.isLogged ? `Update (${order.loggedCalories !== undefined ? order.loggedCalories : '?'} kcal)` : "How much you eat?"}
                                 </button>
                             )}
                         </div>
                     )
                 })}
+                {Array.isArray(data) && data.length === 0 && <p className="no-orders-msg">No orders found.</p>}
             </div>
 
             {showLogModal && (

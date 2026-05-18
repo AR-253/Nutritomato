@@ -44,40 +44,42 @@ const UserDashboard = () => {
                 }
 
                 // 3. Calculate Intake (Last 30 Days & Today)
+                const todayStr = new Date().toISOString().split('T')[0];
                 const thirtyDaysAgo = new Date();
                 thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-                thirtyDaysAgo.setHours(0, 0, 0, 0);
-
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
+                const thirtyDaysAgoStr = thirtyDaysAgo.toISOString().split('T')[0];
 
                 let totalIntake = 0;
                 let todayIntake = 0;
                 let totalMacros = { protein: 0, fats: 0, carbs: 0 };
                 let todayMacros = { protein: 0, fats: 0, carbs: 0 };
 
-                logs.forEach(log => {
-                    const logDate = new Date(log.date);
-                    // Reset log date time for comparison
-                    const logDateOnly = new Date(logDate);
-                    logDateOnly.setHours(0, 0, 0, 0);
+                console.log("[UserDashboard] Calculating intake with todayStr:", todayStr);
+                
+                if (logs && Array.isArray(logs)) {
+                    // Sort logs by date to handle potential duplicates (take latest)
+                    const sortedLogs = [...logs].sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
+                    const seenDates = new Set();
 
-                    // Add to 30-day totals if within range
-                    if (logDate >= thirtyDaysAgo) {
-                        totalIntake += (log.consumedCalories || 0);
-                        totalMacros.protein += (log.consumedProtein || 0);
-                        totalMacros.fats += (log.consumedFats || 0);
-                        totalMacros.carbs += (log.consumedCarbs || 0);
-                    }
+                    sortedLogs.forEach(log => {
+                        if (seenDates.has(log.date)) return; // Only process the latest entry for each date
+                        seenDates.add(log.date);
 
-                    // Add to Today's totals
-                    if (logDateOnly.getTime() === today.getTime()) {
-                        todayIntake += (log.consumedCalories || 0);
-                        todayMacros.protein += (log.consumedProtein || 0);
-                        todayMacros.fats += (log.consumedFats || 0);
-                        todayMacros.carbs += (log.consumedCarbs || 0);
-                    }
-                });
+                        if (log.date >= thirtyDaysAgoStr) {
+                            totalIntake += (log.consumedCalories || 0);
+                            totalMacros.protein += (log.consumedProtein || 0);
+                            totalMacros.fats += (log.consumedFats || 0);
+                            totalMacros.carbs += (log.consumedCarbs || 0);
+                        }
+
+                        if (log.date === todayStr) {
+                            todayIntake = (log.consumedCalories || 0);
+                            todayMacros.protein = (log.consumedProtein || 0);
+                            todayMacros.fats = (log.consumedFats || 0);
+                            todayMacros.carbs = (log.consumedCarbs || 0);
+                        }
+                    });
+                }
 
                 console.log("[UserDashboard] Total Intake:", totalIntake, "Today:", todayIntake);
 

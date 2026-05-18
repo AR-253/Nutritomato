@@ -11,11 +11,13 @@ const dietSchema = new mongoose.Schema({
         goal: { type: String, required: true }
     },
     plan: {
+        title: { type: String },
         calories: { type: Number, required: true },
         protein: { type: Number, required: true },
         carbs: { type: Number, required: true },
         fats: { type: Number, required: true }
     },
+    mealPlan: { type: Array, default: [] },
     date: { type: Date, default: Date.now() }
 })
 

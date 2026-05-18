@@ -245,6 +245,27 @@
     background: #e04f35;
 }
 
+.quick-log-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+}
+
+.meal-select-mini {
+    padding: 4px 8px;
+    border: 1px solid #ff9800;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    background: white;
+    cursor: pointer;
+    outline: none;
+}
+
+.meal-select-mini:focus {
+    border-color: #e65100;
+}
+
 /* Modal Styles */
 .manual-log-overlay {
     position: fixed;
@@ -346,16 +367,71 @@
 
 .macro-info-row {
     display: flex;
-    gap: 15px;
-    margin-top: 8px;
-    margin-bottom: 8px;
-    font-size: 0.85rem;
-    color: #555;
-    background: rgba(255, 255, 255, 0.5);
-    padding: 5px 10px;
-    border-radius: 5px;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 10px;
+    margin-bottom: 12px;
     width: 100%;
-    box-sizing: border-box;
+}
+
+.macro-info-row span {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 5px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 800;
+    background: #fdfdfd;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: transform 0.2s;
+}
+
+.macro-info-row span:hover {
+    transform: translateY(-2px);
+}
+
+.macro-info-row span::before {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.7;
+    margin-bottom: 4px;
+}
+
+.macro-info-row span:nth-child(1) { color: #e74c3c; border-bottom: 3px solid #e74c3c; } /* Protein */
+.macro-info-row span:nth-child(2) { color: #2ecc71; border-bottom: 3px solid #2ecc71; } /* Fats */
+.macro-info-row span:nth-child(3) { color: #f1c40f; border-bottom: 3px solid #f1c40f; } /* Carbs */
+
+.macro-info-row span:nth-child(1)::after { content: "Protein"; font-size: 0.6rem; }
+.macro-info-row span:nth-child(2)::after { content: "Fats"; font-size: 0.6rem; }
+.macro-info-row span:nth-child(3)::after { content: "Carbs"; font-size: 0.6rem; }
+
+/* Mobile Responsiveness for AI Planner */
+@media (max-width: 768px) {
+    .ai-planner {
+        padding: 5px;
+        height: calc(100vh - 70px);
+    }
+    .ai-planner-container {
+        border-radius: 0;
+        box-shadow: none;
+    }
+    .chat-header h2 {
+        font-size: 1.2rem;
+    }
+    .message-bubble {
+        max-width: 90%;
+        font-size: 0.9rem;
+    }
+    .calorie-box {
+        padding: 8px;
+    }
+    .macro-info-row {
+        gap: 8px;
+        font-size: 0.75rem;
+    }
 }
 
 .macro-info-row span {

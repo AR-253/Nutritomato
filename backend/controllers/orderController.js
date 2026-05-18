@@ -1,17 +1,11 @@
 import orderModel from "../models/orderModel.js";
 import userModel from "../models/userModel.js";
-import Stripe from "stripe";
-
-let stripe;
-try {
-    stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-} catch (error) {
-    console.error("Stripe Initialization Error:", error.message);
-}
+import dailyLogModel from "../models/dailyLogModel.js";
+import foodModel from "../models/foodModel.js";
 
 // placing user order for frontend
 const placeOrder = async (req, res) => {
-    const frontend_url = "http://localhost:5173";
+    const frontend_url = process.env.FRONTEND_URL || "http://localhost:5173";
     let newOrder;
 
     try {
@@ -24,44 +18,12 @@ const placeOrder = async (req, res) => {
         await newOrder.save();
         await userModel.findByIdAndUpdate(req.body.userId, { cartData: {} });
 
-        if (req.body.paymentMethod === "cod") {
-            return res.json({ success: true, message: "Order Placed" });
-        }
-
-        const line_items = req.body.items.map((item) => ({
-            price_data: {
-                currency: "inr",
-                product_data: {
-                    name: item.name
-                },
-                unit_amount: item.price * 100 * 80
-            },
-            quantity: item.quantity
-        }))
-
-        line_items.push({
-            price_data: {
-                currency: "inr",
-                product_data: {
-                    name: "Delivery Charges"
-                },
-                unit_amount: 2 * 100 * 80
-            },
-            quantity: 1
-        })
-
-        const session = await stripe.checkout.sessions.create({
-            line_items: line_items,
-            mode: 'payment',
-            success_url: `${frontend_url}/verify?success=true&orderId=${newOrder._id}`,
-            cancel_url: `${frontend_url}/verify?success=false&orderId=${newOrder._id}`,
-        })
-
-        res.json({ success: true, session_url: session.url })
+        // Direct Order Placement (COD Default)
+        res.json({ success: true, message: "Order Placed Successfully (Cash on Delivery)" });
 
     } catch (error) {
-        console.log("Stripe Error:", error);
-        // Rollback: Delete the order if it was saved but payment setup failed
+        console.log("Order Placement Error:", error);
+        // Rollback: Delete the order if it was saved but something failed
         try {
             if (newOrder && newOrder._id) {
                 await orderModel.findByIdAndDelete(newOrder._id);
@@ -70,7 +32,7 @@ const placeOrder = async (req, res) => {
             console.error("Cleanup Error:", cleanupError);
         }
 
-        res.json({ success: false, message: error.message || "Error processing payment" })
+        res.json({ success: false, message: error.message || "Error processing order" })
     }
 }
 

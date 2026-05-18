@@ -1,6 +1,7 @@
 import { v2 as cloudinary } from 'cloudinary';
 import foodModel from "../models/foodModel.js";
 import { original_foods } from "./restore_data.js";
+import fs from 'fs';
 
 // Add food item
 const addFood = async (req, res) => {
@@ -18,6 +19,8 @@ const addFood = async (req, res) => {
     protein: req.body.protein,
     carbs: req.body.carbs,
     fats: req.body.fats,
+    weight: req.body.weight || "250g",
+    ingredients: req.body.ingredients ? JSON.parse(req.body.ingredients) : [],
     image: req.file.path, // Cloudinary provides the full secure URL here
   });
 
@@ -102,10 +105,13 @@ const seedDatabase = async (req, res) => {
         price: 450,
         image: "food_biryani.png",
         category: "Desi",
-        calories: 650,
-        protein: 35,
-        fats: 20,
-        carbs: 80
+        carbs: 80,
+        weight: "350g",
+        ingredients: [
+          { name: "Basmati Rice", quantity: "200g", calories: 260 },
+          { name: "Chicken Meat", quantity: "150g", calories: 280 },
+          { name: "Oil/Ghee", quantity: "15g", calories: 110 }
+        ]
       },
       {
         name: "Mutton Karahi (Half)",
@@ -113,10 +119,14 @@ const seedDatabase = async (req, res) => {
         price: 1200,
         image: "food_karahi.png",
         category: "Desi",
-        calories: 800,
-        protein: 50,
-        fats: 60,
-        carbs: 10
+        carbs: 10,
+        weight: "400g",
+        ingredients: [
+          { name: "Mutton", quantity: "250g", calories: 550 },
+          { name: "Tomatoes", quantity: "100g", calories: 20 },
+          { name: "Ginger/Garlic", quantity: "20g", calories: 30 },
+          { name: "Ghee", quantity: "25g", calories: 200 }
+        ]
       },
       {
         name: "Special Nihari",
@@ -127,7 +137,8 @@ const seedDatabase = async (req, res) => {
         calories: 700,
         protein: 45,
         fats: 50,
-        carbs: 15
+        carbs: 15,
+        weight: "300g"
       },
       {
         name: "Daal Chawal Platter",
@@ -138,7 +149,8 @@ const seedDatabase = async (req, res) => {
         calories: 450,
         protein: 15,
         fats: 10,
-        carbs: 70
+        carbs: 70,
+        weight: "250g"
       },
       {
         name: "Chicken Paratha Roll",
@@ -149,7 +161,8 @@ const seedDatabase = async (req, res) => {
         calories: 550,
         protein: 25,
         fats: 30,
-        carbs: 45
+        carbs: 45,
+        weight: "180g"
       },
       {
         name: "Zinger Burger",
@@ -160,7 +173,8 @@ const seedDatabase = async (req, res) => {
         calories: 600,
         protein: 28,
         fats: 35,
-        carbs: 50
+        carbs: 50,
+        weight: "220g"
       },
       {
         name: "Club Sandwich",
@@ -171,7 +185,8 @@ const seedDatabase = async (req, res) => {
         calories: 450,
         protein: 25,
         fats: 20,
-        carbs: 40
+        carbs: 40,
+        weight: "200g"
       },
       {
         name: "Chicken Chowmein",
@@ -182,7 +197,8 @@ const seedDatabase = async (req, res) => {
         calories: 500,
         protein: 25,
         fats: 15,
-        carbs: 65
+        carbs: 65,
+        weight: "300g"
       },
       {
         name: "Creamy Tikka Pasta",
@@ -190,10 +206,13 @@ const seedDatabase = async (req, res) => {
         price: 600,
         image: "food_tikka_pasta.png",
         category: "Pasta",
-        calories: 750,
-        protein: 35,
-        fats: 40,
-        carbs: 60
+        carbs: 60,
+        weight: "350g",
+        ingredients: [
+          { name: "Penne Pasta", quantity: "150g", calories: 300 },
+          { name: "Chicken Tikka", quantity: "100g", calories: 180 },
+          { name: "Creamy Sauce", quantity: "80ml", calories: 270 }
+        ]
       },
       {
         name: "Gulab Jamun (2 pcs)",
@@ -204,7 +223,8 @@ const seedDatabase = async (req, res) => {
         calories: 300,
         protein: 4,
         fats: 12,
-        carbs: 55
+        carbs: 55,
+        weight: "2 pcs"
       }
     ];
 
@@ -239,7 +259,7 @@ const seedDatabase = async (req, res) => {
 // Update food item
 const updateFood = async (req, res) => {
   try {
-    const { id, name, description, price, category, calories, protein, carbs, fats } = req.body;
+    const { id, name, description, price, category, calories, protein, carbs, fats, weight, ingredients } = req.body;
     const food = await foodModel.findById(id);
     
     if (!food) {
@@ -266,6 +286,8 @@ const updateFood = async (req, res) => {
       protein: Number(protein),
       carbs: Number(carbs),
       fats: Number(fats),
+      weight: weight,
+      ingredients: ingredients ? JSON.parse(ingredients) : [],
       image: image_url
     });
 

@@ -5,6 +5,12 @@ import { StoreContext } from '../../context/StoreContext';
 import axios from 'axios';
 
 const LoginPop = (props) => {
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, []);
   const [currState, setCurrState] = useState("Login");
   const [step, setStep] = useState(1); // 1: Login/Basic, 2: Personal, 3: Goals
   const [data, setData] = useState({

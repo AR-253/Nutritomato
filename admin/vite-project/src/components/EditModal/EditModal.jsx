@@ -84,7 +84,7 @@ const EditModal = ({ url, foodItem, closeModal, refreshList }) => {
                 <p className="label">Product Image (Optional)</p>
                 <label htmlFor="edit-image" className="upload-box">
                   <img
-                    src={image ? URL.createObjectURL(image) : `${url}/uploads/${foodItem.image}`}
+                    src={image ? URL.createObjectURL(image) : (foodItem.image.startsWith('http') ? foodItem.image : `${url}/uploads/${foodItem.image}`)}
                     alt="Preview"
                     className="preview-img"
                   />

@@ -1,0 +1,231 @@
+.weekly-report-page {
+    padding: 40px 5%;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+}
+
+.report-header {
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.report-header h2 {
+    font-size: 2rem;
+    color: #2c3e50;
+    margin: 0;
+}
+
+.back-btn {
+    padding: 10px 20px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.back-btn:hover {
+    background: #f0f0f0;
+}
+
+.report-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 30px;
+}
+
+/* Summary Cards */
+.report-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.stat-card {
+    background: white;
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    text-align: center;
+}
+
+.stat-card h3 {
+    font-size: 0.9rem;
+    color: #888;
+    text-transform: uppercase;
+    margin-bottom: 15px;
+}
+
+.stat-card .value {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #2c3e50;
+}
+
+.stat-card .sub {
+    font-size: 1rem;
+    color: #7f8c8d;
+}
+
+.score-card {
+    background: linear-gradient(135deg, #ff6347 0%, #ff4500 100%);
+    color: white;
+}
+
+.score-card h3, .score-card .sub {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.score-card .value {
+    color: white;
+}
+
+/* Chart Card */
+.chart-card {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.chart-card h3 {
+    margin-bottom: 30px;
+    color: #2c3e50;
+}
+
+.chart-container {
+    height: 400px;
+    width: 100%;
+}
+
+/* Breakdown List Vertical */
+.breakdown-list-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.breakdown-item-v {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 22px 30px;
+    border-radius: 24px;
+    background: white;
+    margin-bottom: 18px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    border: 1px solid rgba(0,0,0,0.05);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.breakdown-item-v::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    border-radius: 0 10px 10px 0;
+}
+
+/* Status Sidebar Colors */
+.on-track::before { background: #45c4b0; }
+.over::before { background: #ef4444; }
+.under::before { background: #f1c40f; }
+.no-data::before { background: #ddd; }
+
+.breakdown-item-v:hover {
+    transform: scale(1.02) translateX(10px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+}
+
+.day-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 140px;
+}
+
+.day-name {
+    font-weight: 800;
+    font-size: 1.2rem;
+    color: #2c3e50;
+    letter-spacing: -0.5px;
+}
+
+.day-date {
+    font-size: 0.85rem;
+    color: #aab7b8;
+    font-weight: 500;
+}
+
+.food-info {
+    flex: 1;
+    margin: 0 40px;
+    padding: 0 20px;
+    border-left: 1px solid #f0f0f0;
+}
+
+.foods-list {
+    font-size: 1rem;
+    color: #5d6d7e;
+    font-weight: 500;
+    line-height: 1.4;
+    display: block;
+}
+
+.cal-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    min-width: 130px;
+}
+
+.cal-info .val {
+    font-weight: 900;
+    font-size: 1.4rem;
+    color: #2c3e50;
+}
+
+.status-tag {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 12px;
+    margin-top: 8px;
+    letter-spacing: 0.5px;
+}
+
+/* Status Colors */
+.on-track .status-tag { background: #e6f7f4; color: #45c4b0; }
+.over .status-tag { background: #fff1f0; color: #ef4444; }
+.under .status-tag { background: #fefbe8; color: #ca8a04; }
+.no-data .status-tag { background: #f4f6f7; color: #95a5a6; }
+
+@media (max-width: 900px) {
+    .breakdown-item-v { 
+        flex-direction: column; 
+        align-items: flex-start; 
+        gap: 15px; 
+        padding: 25px;
+    }
+    .food-info { 
+        margin: 0; 
+        padding: 10px 0; 
+        border-left: none; 
+        border-top: 1px solid #f0f0f0;
+        width: 100%;
+    }
+    .cal-info { 
+        align-items: flex-start; 
+        border-top: 1px solid #f0f0f0;
+        width: 100%;
+        padding-top: 10px;
+    }
+}

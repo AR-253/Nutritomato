@@ -16,14 +16,23 @@ const Header = () => {
       ) : (
         <div className="header-contents-wrapper">
           <div className="header-contents-glass">
-            <h2>Order your favourite food here</h2>
+            <div className="header-ai-badge">
+              <span className="badge-pulse"></span>
+              AI-Driven Nutrition
+            </div>
+            <h2>Smart Meals for a Smarter You</h2>
             <p>
-              Choose from a diverse menu featuring a delectable array of dishes crafted
-              with the finest ingredients and culinary expertise — one delicious meal at a time.
+              Experience the future of food delivery. Our AI analyzes your needs to recommend 
+              the perfect dishes for your health and taste — one delicious meal at a time.
             </p>
-            <a href='#explore-menu' className="view-menu-link">
-              <button>View Menu</button>
-            </a>
+            <div className="header-btns">
+              <a href='#explore-menu' className="view-menu-link">
+                <button>View Menu</button>
+              </a>
+              <a href='/ai-planner' className="ai-planner-link">
+                <button className="ai-btn">AI Meal Planner</button>
+              </a>
+            </div>
           </div>
         </div>
       )}

@@ -1,27 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import './SmartScanner.css'; 
+import { StoreContext } from '../../context/StoreContext';
 
 const SmartScanner = () => {
-  const [image, setImage] = useState(null);
-  const [prediction, setPrediction] = useState(null);
-  const [loading, setLoading] = useState(false);
+    const { url } = useContext(StoreContext);
+    const [image, setImage] = useState(null);
+    const [prediction, setPrediction] = useState(null);
+    const [loading, setLoading] = useState(false);
 
-  const handleUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    const handleUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
 
-    setImage(URL.createObjectURL(file));
-    setLoading(true);
-    setPrediction(null); 
+        setImage(URL.createObjectURL(file));
+        setLoading(true);
+        setPrediction(null);
 
-    const formData = new FormData();
-    // This 'image' key must match upload.single('image') in server.js
-    formData.append('image', file);
+        const formData = new FormData();
+        // This 'image' key must match upload.single('image') in server.js
+        formData.append('image', file);
 
-    try {
-      // ✅ CHANGED: Port updated to 4000 to match your server.js
-      const res = await axios.post('http://localhost:4000/api/food/predict-nutrition', formData);
+        try {
+            // Using global URL from context
+            const res = await axios.post(url + '/api/food/predict-nutrition', formData);
       
       if (res.data.success) {
         setPrediction(res.data.data);

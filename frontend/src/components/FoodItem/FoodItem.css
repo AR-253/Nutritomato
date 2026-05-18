@@ -1,108 +1,269 @@
 .food-item {
     width: 100%;
     margin: auto;
-    border-radius: 15px;
-    box-shadow: 0px 0px 10px #00000015;
-    transition: 0.3s;
-    animation: fadeIn 1s;
+    border-radius: 24px;
+    background: #fdfdff;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    transition: all 0.4s ease;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid rgba(0,0,0,0.03);
+    font-family: 'Outfit', sans-serif;
+}
+
+.food-item:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+}
+
+/* Vibrant AI Recommended Badge */
+.smart-pick-badge {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: linear-gradient(135deg, #ff6347, #ff8c00);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 11px;
+    font-weight: 800;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 4px 15px rgba(255, 99, 71, 0.4);
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-icon {
+    font-size: 14px;
+    filter: drop-shadow(0 0 2px rgba(255,255,255,0.5));
 }
 
 .food-item-image-container {
     position: relative;
+    width: 100%;
+    overflow: hidden;
 }
 
 .food-item-image {
     width: 100%;
-    height: 180px;
-    /* Fixed height for uniformity */
+    height: 220px;
     object-fit: cover;
-    /* Crop image to fit */
-    border-radius: 15px 15px 0px 0px;
+    display: block;
+    transition: transform 0.5s ease;
+}
+
+.food-item:hover .food-item-image {
+    transform: scale(1.05);
 }
 
 .food-item-info {
-    padding: 20px;
+    padding: 24px;
 }
 
-.food-item-name-rating {
+.food-item-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 12px;
+    min-height: 54px;
 }
 
-.food-item-name-rating p {
-    font-size: 20px;
-    font-weight: 500;
+.food-item-name {
+    font-size: 18px;
+    font-weight: 800;
+    color: #1a1c24;
+    margin: 0;
+    line-height: 1.2;
+    flex: 1;
 }
 
-.food-item-name-rating img {
-    width: 70px;
+.food-item-price {
+    font-size: 18px;
+    font-weight: 800;
+    color: #1a1c24;
+    margin: 0;
+    white-space: nowrap;
 }
 
 .food-item-desc {
-    color: #676767;
-    font-size: 12px;
-    /* Limit to 2 lines */
+    font-size: 13px;
+    color: #555;
+    line-height: 1.5;
+    margin-bottom: 20px;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    text-overflow: ellipsis;
-    height: 36px;
-    /* Fixed height roughly 2 lines */
+    height: 40px;
 }
 
-.food-item-price-rating {
+/* Nutrition Box */
+.food-item-nutrition-box {
+    margin-bottom: 15px;
+}
+
+.nutrition-main {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-top: 10px;
+    gap: 15px;
+    margin-bottom: 12px;
 }
 
-.food-item-price {
-    color: tomato;
-    font-size: 22px;
-    font-weight: 500;
-    margin: 10px 0px;
-}
-
-.food-item-calories {
-    color: #888;
-    font-size: 14px;
-    font-weight: 500;
-    background: #f0f0f0;
-    padding: 2px 8px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.food-item-calories:hover {
-    background: #e2e2e2;
-    color: #555;
-}
-
-.food-item-macros {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-    font-size: 11px;
-    color: #555;
-    background: #f9f9f9;
-    padding: 8px;
-    border-radius: 8px;
-}
-
-.macro-item {
+.calories-display {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
 }
 
-.macro-label {
-    font-weight: 600;
+.cal-num {
+    font-size: 32px;
+    font-weight: 800;
+    color: #1a1c24;
+    line-height: 1;
+}
+
+.cal-text {
+    font-size: 10px;
+    font-weight: 700;
+    color: #1a1c24;
+    letter-spacing: 0.5px;
+    margin-top: 2px;
+}
+
+.divider {
+    width: 1px;
+    height: 30px;
+    background: #e0e0e0;
+}
+
+.nutrition-label {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1a1c24;
+}
+
+.macro-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.macro-pill {
+    flex: 1;
+    min-width: 80px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 10px;
+    border-radius: 12px;
+    transition: transform 0.2s;
+}
+
+.macro-pill:hover {
+    transform: scale(1.05);
+}
+
+.pill-icon {
+    font-size: 18px;
+    background: rgba(255,255,255,0.6);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.pill-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.pill-text .label {
+    font-size: 11px;
+    font-weight: 700;
     color: #333;
+}
+
+.pill-text .value {
+    font-size: 12px;
+    font-weight: 600;
+    color: #444;
+}
+
+.macro-pill.protein { background-color: #ffd8c4; }
+.macro-pill.carbs { background-color: #d8f5d8; }
+.macro-pill.fats { background-color: #c4f0f0; }
+
+.food-item-footer {
+    border-top: 1px solid #f0f0f0;
+    padding-top: 15px;
+    margin-top: 10px;
+}
+
+.portion-size {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a1c24;
+}
+
+.p-val {
+    color: #666;
+    font-weight: 500;
+}
+
+/* Perfect CSS Plus Button */
+.add {
+    width: 42px;
+    height: 42px;
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.12);
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: none;
+}
+
+.add::before, .add::after {
+    content: '';
+    position: absolute;
+    background: #333;
+    border-radius: 10px;
+    transition: background 0.3s;
+}
+
+/* Horizontal line */
+.add::before {
+    width: 14px;
+    height: 2px;
+}
+
+/* Vertical line */
+.add::after {
+    width: 2px;
+    height: 14px;
+}
+
+.add:hover {
+    transform: scale(1.1) rotate(90deg);
+    background: #fff;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+}
+
+.add:hover::before, .add:hover::after {
+    background: #000;
 }
 
 .food-item-counter {
@@ -111,21 +272,34 @@
     right: 15px;
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 6px;
+    gap: 15px;
+    padding: 6px 12px;
     border-radius: 50px;
-    background-color: white;
+    background: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    z-index: 10;
 }
 
-.food-item-counter img {
+.food-item-counter p {
+    font-weight: 800;
+    font-size: 16px;
+    color: #333;
+    margin: 0;
+}
+
+.counter-btn {
     width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: 600;
+    color: #ff6347;
+    transition: transform 0.2s;
 }
 
-.add {
-    width: 35px;
-    position: absolute;
-    bottom: 15px;
-    right: 15px;
-    cursor: pointer;
-    border-radius: 50%;
+.counter-btn:hover {
+    transform: scale(1.2);
 }

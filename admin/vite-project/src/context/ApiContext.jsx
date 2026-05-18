@@ -3,7 +3,8 @@ import React, { createContext, useState } from 'react';
 export const ApiContext = createContext();
 
 const ApiContextProvider = (props) => {
-    const [url, setUrl] = useState("http://localhost:4000"); // Assuming backend runs on port 4000
+    // Dynamically use environment variable if present (Vite uses import.meta.env)
+    const [url, setUrl] = useState(import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:4000"); 
 
     const contextValue = {
         url

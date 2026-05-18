@@ -30,7 +30,7 @@ const PlaceOrder = () => {
   const placeOrder = async (event) => {
     event.preventDefault();
     let orderItems = [];
-    food_list.map((item) => {
+    food_list?.map((item) => {
       if (cartItems[item._id] > 0) {
         let itemInfo = item;
         itemInfo["quantity"] = cartItems[item._id];
@@ -152,15 +152,11 @@ const PlaceOrder = () => {
             </div>
           </div>
           <div className="payment-options">
-            <h2>Select Payment Method</h2>
-            <div onClick={() => setPayment("cod")} className={`payment-option ${payment === "cod" ? "selected" : ""}`}>
-              <p>COD (Cash on Delivery)</p>
-            </div>
-            <div onClick={() => setPayment("stripe")} className={`payment-option ${payment === "stripe" ? "selected" : ""}`}>
-              <p>Stripe (Credit / Debit)</p>
+            <div className="payment-option selected">
+              <p>Cash on Delivery (Standard)</p>
             </div>
           </div>
-          <button type='submit'>PROCEED TO PAYMENT</button>
+          <button type='submit'>PLACE ORDER</button>
         </div>
       </div>
     </form>

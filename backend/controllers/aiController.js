@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-// Using gemini-flash-latest as verified working model
+// Using gemini-flash-latest as it is verified available for this API key
 const MODEL_NAME = "gemini-flash-latest";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -17,6 +17,15 @@ const responseCache = new Map();
 const chatWithAI = async (req, res) => {
     let imagePath = null;
     console.log(`[AI Debug] Handling request using model: ${MODEL_NAME}`);
+
+    if (!process.env.GEMINI_API_KEY) {
+        console.error("[AI Error] GEMINI_API_KEY is missing from environment variables!");
+        return res.json({
+            success: false,
+            message: "API Key Error: GEMINI_API_KEY is not defined in .env file.",
+            error: "MISSING_API_KEY"
+        });
+    }
 
     try {
         const { prompt, history } = req.body;
@@ -32,7 +41,15 @@ const chatWithAI = async (req, res) => {
             return res.json({
                 success: true,
                 message: cachedData.text,
-                calories: cachedData.calories
+                foodName: cachedData.foodName,
+                calories: cachedData.calories,
+                protein: cachedData.protein,
+                fats: cachedData.fats,
+                carbs: cachedData.carbs,
+                confidence: cachedData.confidence,
+                confidenceScore: cachedData.confidenceScore,
+                ingredients: cachedData.ingredients || [],
+                mealPlan: cachedData.mealPlan || []
             });
         }
         // ... (existing code)
@@ -49,7 +66,7 @@ const chatWithAI = async (req, res) => {
 
         const model = genAI.getGenerativeModel({
             model: MODEL_NAME,
-            systemInstruction: "You are a professional, friendly, and expert AI Nutritionist. You help users plan their diet, gain, lose, or maintain weight, and provide nutrition advice.\n\nCritically, you can analyze images of food. When a user sends an image, identify the food, estimate the portion size accurately, and provide the calorie count AND MACRONUTRIENTS.\n\nFor Packaged Foods: If the user uploads an image of a wrapper, bottle, or label, ALWAYS try to read the specific calorie/macro information from the image text first. If it's a text query for a packaged item (e.g. 'Booster energy drink'), provide an estimate but explicitly state that brands vary significantly and advise checking the label.\n\nIMPORTANT: You must output JSON.\n\nJSON Schema:\n{\n  \"text\": \"Your detailed advice here...\",\n  \"calories\": \"Total calories (e.g., '500') or null\",\n  \"protein\": \"Total protein in grams (e.g., '30') or null\",\n  \"fats\": \"Total fats in grams (e.g., '10') or null\",\n  \"carbs\": \"Total carbs in grams (e.g., '50') or null\",\n  \"confidence\": \"High/Medium/Low\",\n  \"confidenceScore\": \"Percentage (e.g. 85)\" \n}",
+            systemInstruction: "You are a professional, friendly, and expert AI Nutritionist. You help users plan their diet, gain, lose, or maintain weight, and provide nutrition advice.\n\nCritically, you can analyze images of food. When a user sends an image, identify the food, estimate the portion size accurately, and provide the calorie count AND ALL THREE MACRONUTRIENTS (Protein, Fats, Carbs).\n\nIf the user asks for ingredients or a recipe breakdown, include a detailed array of ingredients with their quantities and calories.\n\nIf the user asks for a meal plan, generate a detailed daily meal plan including Breakfast, Lunch, Dinner, and Snacks, formatted in the 'mealPlan' array. CRITICAL INSTRUCTION: You MUST provide the exact weight in GRAMS for every single ingredient in the 'food' string. DO NOT use vague names like 'Oatmeal with Walnuts'. You MUST format it as: '80g Oatmeal + 20g Walnuts + 2 Boiled Eggs'. Failing to provide gram weights will crash the system.\n\nIf the user sends a text query like 'apple' or '1 pizza', provide a realistic estimate for all macros. NEVER return null or 0 if the food has nutritional value.\n\nFor Packaged Foods: If the user uploads an image of a wrapper, bottle, or label, ALWAYS try to read the specific calorie/macro information from the image text first.\n\nIMPORTANT: You must output JSON.\n\nJSON Schema:\n{\n  \"text\": \"Your detailed advice here...\",\n  \"foodName\": \"Short name of the food identified (e.g., 'Apple', 'Chicken Tikka')\",\n  \"calories\": \"Total calories (e.g., '500')\",\n  \"protein\": \"Total protein in grams (e.g., '30')\",\n  \"fats\": \"Total fats in grams (e.g., '10')\",\n  \"carbs\": \"Total carbs in grams (e.g., '50')\",\n  \"confidence\": \"High/Medium/Low\",\n  \"confidenceScore\": \"Percentage (e.g. 85)\",\n  \"ingredients\": [ { \"name\": \"Ingredient 1\", \"quantity\": \"100g\", \"calories\": 150 } ],\n  \"mealPlan\": [ { \"meal\": \"Breakfast\", \"food\": \"100g Oatmeal + 50g Blueberries + 20g Almonds\", \"calories\": 300, \"protein\": 10, \"carbs\": 40, \"fats\": 5 } ] \n}",
             generationConfig: { responseMimeType: "application/json" }
         });
 
@@ -74,12 +91,12 @@ const chatWithAI = async (req, res) => {
         const parts = [];
         if (prompt) {
             // Append explicit instruction to user prompt to force compliance
-            parts.push({ text: prompt + " \n[System: Return JSON with {text, calories, protein, fats, carbs}]" });
+            parts.push({ text: prompt + " \n[System: Return strictly JSON according to the schema provided in the system instructions.]" });
         }
 
         if (req.file) {
-            imagePath = req.file.path;
-            const imageData = fs.readFileSync(imagePath);
+            // Using buffer from memoryStorage (Vercel compatible)
+            const imageData = req.file.buffer;
             parts.push({
                 inlineData: {
                     data: imageData.toString("base64"),
@@ -111,6 +128,10 @@ const chatWithAI = async (req, res) => {
                 { role: "user", parts }
             ]
         });
+
+        if (!result || !result.response) {
+            throw new Error("Empty response from Gemini API");
+        }
 
         const rawText = result.response.text();
         let finalResponse = {};
@@ -152,12 +173,15 @@ const chatWithAI = async (req, res) => {
         res.json({
             success: true,
             message: finalResponse.text,
+            foodName: finalResponse.foodName,
             calories: finalResponse.calories,
             protein: finalResponse.protein,
             fats: finalResponse.fats,
             carbs: finalResponse.carbs,
             confidence: finalResponse.confidence,
-            confidenceScore: finalResponse.confidenceScore
+            confidenceScore: finalResponse.confidenceScore,
+            ingredients: finalResponse.ingredients || [],
+            mealPlan: finalResponse.mealPlan || []
         });
 
     } catch (error) {
@@ -166,11 +190,17 @@ const chatWithAI = async (req, res) => {
         let userMessage = "AI service is temporarily unavailable.";
 
         if (error.message.includes("429")) {
-            userMessage = "Too many requests. Please wait 1 minute.";
+            userMessage = "Too many requests (Rate Limit). Please wait 1 minute.";
         } else if (error.message.includes("400") && error.message.includes("expired")) {
             userMessage = "API Key Error: The key appears to be expired.";
-        } else if (error.message.includes("API key not valid")) {
-            userMessage = "API Key Error: Invalid key.";
+        } else if (error.message.includes("API key not valid") || error.message.includes("API_KEY_INVALID")) {
+            userMessage = "API Key Error: Your API key is invalid. Please check your .env file.";
+        } else if (error.message.includes("User location is not supported")) {
+            userMessage = "AI Error: Gemini is not available in your current region.";
+        } else if (error.message.includes("Safety")) {
+            userMessage = "AI Error: The request was blocked by safety filters.";
+        } else if (error.message.includes("quota")) {
+            userMessage = "AI Error: Project quota exceeded. Please check your Google Cloud billing/limits.";
         }
 
         res.json({

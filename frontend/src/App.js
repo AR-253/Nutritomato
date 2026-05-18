@@ -1,5 +1,5 @@
-import './responsive.css';
 import React, { useEffect, useContext } from 'react';
+import './responsive.css';
 import { BrowserRouter, Switch, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/navbar/Navbar.js';
 import Home from './pages/Home/Home.js';
@@ -11,9 +11,12 @@ import DietPlanner from './pages/DietPlanner/DietPlanner.jsx';
 import AIPlanner from './pages/AIPlanner/AIPlanner.jsx';
 import MyOrders from './pages/MyOrders/MyOrders.jsx';
 import History from './pages/History/History.jsx';
+import Diary from './pages/Diary/Diary.jsx';
+import WeeklyReport from './pages/WeeklyReport/WeeklyReport.jsx';
 import ConsumptionReminder from './components/ConsumptionReminder/ConsumptionReminder.jsx';
 import WelcomePopup from './components/WelcomePopup/WelcomePopup.jsx';
 import { StoreContext } from './context/StoreContext';
+import AIAssistantFAB from './components/AIAssistantFAB/AIAssistantFAB.jsx';
 
 // SmartScanner removed as it is now integrated into AIPlanner
 const ScrollToTop = () => {
@@ -55,6 +58,8 @@ const App = () => {
             
             
             <Route path="/history" component={History} />
+            <Route path="/diary" component={Diary} />
+            <Route path="/weekly-report" component={Diary} />
             <Route path="/myorders" component={MyOrders} />
             <Route exact path="/" component={Home} />
             
@@ -65,9 +70,10 @@ const App = () => {
         
         {/* Conditional Footer - Hide on certain pages */}
         <Route render={({ location }) => {
-          const hideFooterPages = ['/diet-planner', '/ai-planner', '/cart', '/myorders', '/history', '/placeorder'];
+          const hideFooterPages = ['/diet-planner', '/ai-planner', '/cart', '/myorders', '/history', '/placeorder', '/diary'];
           return !hideFooterPages.includes(location.pathname) ? <Footer /> : null;
         }} />
+        <AIAssistantFAB />
       </BrowserRouter>
     </>
   );

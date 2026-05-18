@@ -1,4 +1,5 @@
-import 'dotenv/config'
+import dotenv from 'dotenv'
+dotenv.config() 
 import express from "express"
 import cors from "cors"
 import fs from 'fs'
@@ -11,80 +12,113 @@ import userRouter from "./routes/userRoutes.js"
 import orderRouter from "./routes/orderRoute.js"
 import dietRouter from "./routes/dietRoute.js"
 import aiRouter from "./routes/aiRoute.js"
+import cartRouter from "./routes/cartRoute.js"
+import { identifyFoodWithGemini } from "./utils/geminiHelper.js"
 
 const app = express()
 const port = 4000
 
-// ✅ Production Health Check (Top level to bypass DB issues)
+// ✅ Production Health Check
 app.get("/api/health-check", (req, res) => {
   res.status(200).json({ success: true, message: "Server is ALIVE" });
 });
 
-// ✅ Multer Setup (AI Image handling in memory)
 const upload = multer({ storage: multer.memoryStorage() });
 
-// ✅ Middleware
 app.use(express.json())
-app.use(cors()) // Simplified for broad compatibility during deployment fix
+app.use(cors())
 
-// Custom Logger (Disabled file logging for Vercel compatibility)
 app.use((req, res, next) => {
-    const logEntry = `[${new Date().toLocaleTimeString()}] ${req.method} ${req.url}`;
-    console.log(logEntry);
+    console.log(`[${new Date().toLocaleTimeString()}] ${req.method} ${req.url}`);
     next();
 });
 
-// ✅ Serve uploaded images publicly
 app.use("/uploads", express.static("uploads"))
 
-// ✅ Connect DB (Lazy middleware for serverless stability)
-app.use(async (req, res, next) => {
-    try {
-        await connectDB();
-        next();
-    } catch (err) {
-        console.error("DB Middleware Error:", err.message);
-        next(); // Proceed anyway and let the routes handle failures
-    }
-});
+connectDB();
 
-// ---------------------------------------------------------
-// 🔥 AI PREDICTION DIRECT ROUTE (Integration Start)
-// ---------------------------------------------------------
 app.post("/api/food/predict-nutrition", upload.single('image'), async (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({ success: false, message: "No image uploaded" });
         }
 
-        console.log("Forwarding image to AI Service (Flask)...");
+        const envUrl = (process.env.AI_SERVICE_URL || '').trim();
+        const targets = [
+            'http://127.0.0.1:7860',
+            envUrl,
+            'http://localhost:7860'
+        ].filter(t => t);
 
-        // Prepare form data for Flask
-        const formData = new FormData();
-        formData.append('file', req.file.buffer, {
-            filename: req.file.originalname,
-            contentType: req.file.mimetype,
-        });
+        let flaskResponse = null;
+        let lastError = null;
 
-        // Requesting Flask Server (Port 5000)
-        const flaskResponse = await axios.post('http://127.0.0.1:5000/predict', formData, {
-            headers: {
-                ...formData.getHeaders(),
-            },
-        });
+        // 1. Try Local Model First
+        for (const target of targets) {
+            try {
+                const baseUrl = target.endsWith('/') ? target.slice(0, -1) : target;
+                const fullUrl = `${baseUrl}/predict`;
+                
+                const formData = new FormData();
+                formData.append('file', req.file.buffer, {
+                    filename: req.file.originalname,
+                    contentType: req.file.mimetype,
+                });
 
-        // Returning the nutrition data to React
-        res.status(200).json({
-            success: true,
-            data: flaskResponse.data.prediction
-        });
+                flaskResponse = await axios.post(fullUrl, formData, {
+                    headers: { ...formData.getHeaders() },
+                    timeout: 5000 
+                });
+
+                if (flaskResponse && flaskResponse.data) break; 
+            } catch (err) {
+                lastError = err;
+            }
+        }
+
+        // 2. Hybrid Logic: Evaluate Confidence
+        const MIN_CONFIDENCE = 65; 
+        let finalData = null;
+
+        if (flaskResponse && flaskResponse.data?.prediction) {
+            const prediction = flaskResponse.data.prediction;
+            console.log(`[Hybrid AI] Local Match: ${prediction.Dish_Name} (${prediction.confidence_score?.toFixed(1)}%)`);
+
+            if (prediction.confidence_score >= MIN_CONFIDENCE) {
+                finalData = prediction;
+            } else {
+                console.log("[Hybrid AI] Low confidence, falling back to Gemini...");
+            }
+        }
+
+        // 3. Fallback to Gemini if Local failed or was unsure
+        if (!finalData) {
+            console.log("[Hybrid AI] Querying Gemini Cloud...");
+            const geminiData = await identifyFoodWithGemini(req.file.buffer, req.file.mimetype);
+            if (geminiData) {
+                finalData = {
+                    ...geminiData,
+                    isGemini: true,
+                    confidence_score: 100 // Gemini as ground truth fallback
+                };
+            }
+        }
+
+        if (finalData) {
+            return res.status(200).json({
+                success: true,
+                data: finalData
+            });
+        }
+
+        throw lastError || new Error("All AI targets unreachable");
 
     } catch (error) {
-        console.error("AI Service Error:", error.message);
-        res.status(500).json({
+        console.error("Hybrid AI Error:", error);
+        res.status(200).json({ 
             success: false,
-            message: "AI Server is not responding. Make sure Flask is running on port 5000.",
-            error: error.message
+            message: error.message || "AI Service Error",
+            error: error.stack
         });
     }
 });
@@ -98,6 +132,7 @@ app.use("/api/user", userRouter)
 app.use("/api/order", orderRouter)
 app.use("/api/diet", dietRouter)
 app.use("/api/ai", aiRouter)
+app.use("/api/cart", cartRouter)
 
 // ✅ Test Route
 app.get("/", (req, res) => {
@@ -105,11 +140,9 @@ app.get("/", (req, res) => {
 })
 
 // ✅ Server Listen (Only for Local Development)
-if (process.env.NODE_ENV !== 'production') {
-  app.listen(port, () => {
-    console.log(`Server Started on http://localhost:${port}`)
-  })
-}
+app.listen(port, () => {
+  console.log(`Server Started on http://localhost:${port}`)
+})
 
 // ✅ Global Error Handler (FOR DEBUGGING VERCEL 500)
 app.use((err, req, res, next) => {

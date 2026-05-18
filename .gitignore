@@ -35,3 +35,6 @@ frontend/node_modules/
 admin/node_modules/
 ai_service/venv/
 ai_service/__pycache__/
+
+.vercel
+.env*.local

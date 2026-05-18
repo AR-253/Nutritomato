@@ -7,6 +7,7 @@ const dailyLogSchema = new mongoose.Schema({
     consumedProtein: { type: Number, default: 0 },
     consumedFats: { type: Number, default: 0 },
     consumedCarbs: { type: Number, default: 0 },
+    waterIntake: { type: Number, default: 0 }, // New field for water tracking
     timestamp: { type: Date, default: Date.now },
     logs: [
         {
@@ -15,9 +16,11 @@ const dailyLogSchema = new mongoose.Schema({
             protein: { type: Number, default: 0 },
             fats: { type: Number, default: 0 },
             carbs: { type: Number, default: 0 },
-            portion: { type: String }, // e.g., "1 slice", "200g"
+            portion: { type: String }, 
+            mealType: { type: String, enum: ['Breakfast', 'Lunch', 'Dinner', 'Snack', 'General'], default: 'General' }, // New field
             type: { type: String, enum: ['manual', 'ai', 'order'], default: 'manual' },
-            image: { type: String }, // Optional: separate URL or base64 if needed, usually just analyzing
+            orderId: { type: String }, // To link with order updates
+            image: { type: String }, 
             timestamp: { type: Date, default: Date.now }
         }
     ]

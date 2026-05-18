@@ -9,10 +9,12 @@ import Orders from "./pages/Order/Orders";
 import Audits from "./pages/Audits/Audits";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { url } from "./assets/assets";
+import { ApiContext } from "./context/ApiContext";
+import { useContext } from "react";
 import Login from "./pages/Login/Login";
 
 const App = () => {
+  const { url } = useContext(ApiContext);
   const [token, setToken] = useState(localStorage.getItem("token") || "");
   const { pathname } = useLocation();
 

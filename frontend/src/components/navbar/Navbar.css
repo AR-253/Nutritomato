@@ -18,6 +18,23 @@
     padding: 15px 0px;
 }
 
+.navbar-left-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.hamburger-btn {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: #ff6347;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+}
+
 /* Logo Styling */
 .logo-text {
     width: 170px; /* Slightly wider to accommodate text comfortably */
@@ -167,8 +184,13 @@
     cursor: pointer;
 }
 
-.nav-profile-dropdown li img {
+.nav-profile-dropdown li img,
+.nav-profile-dropdown li .nav-profile-icon {
     width: 20px;
+    font-size: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .nav-profile-dropdown li p {

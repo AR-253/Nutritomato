@@ -97,14 +97,15 @@ const MyOrders = () => {
                     fats: consumedFats,
                     carbs: consumedCarbs,
                     orderId: selectedOrder._id,
-                    foodName: foodName,
-                    date: selectedOrder.date // Sync with order date
+                    foodName: foodName
+                    // Not passing order date so it defaults to the current day (today) when consumed!
                 },
                 { headers: { token } }
             );
 
             if (response.data.success) {
-                alert(`Logged order consumption for ${new Date(selectedOrder.date).toLocaleDateString()}: ${percentage}%!`);
+                window.__dashboardCache = null; // Invalidate dashboard cache for live updates
+                alert(`Logged order consumption: ${percentage}%!`);
                 await fetchOrders(); // Refresh data to show "Update" button
             } else {
                 alert("Failed to log consumption: " + response.data.message);

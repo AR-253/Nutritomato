@@ -33,48 +33,46 @@ const App = () => {
 
   return (
     <>
-      <BrowserRouter>
-        <ScrollToTop />
+      <ScrollToTop />
+      
+      {welcome.show && (
+        <WelcomePopup 
+          name={welcome.name} 
+          setShow={(val) => setWelcome(prev => ({ ...prev, show: val }))} 
+        />
+      )}
+      
+      {showLogin && <LoginPop setWelcome={setWelcome} />}
+      
+      <Navbar />
+      
+      <div className='app'>
+        <ConsumptionReminder />
         
-        {welcome.show && (
-          <WelcomePopup 
-            name={welcome.name} 
-            setShow={(val) => setWelcome(prev => ({ ...prev, show: val }))} 
-          />
-        )}
-        
-        {showLogin && <LoginPop setWelcome={setWelcome} />}
-        
-        <Navbar />
-        
-        <div className='app'>
-          <ConsumptionReminder />
+        <Switch>
+          <Route path="/placeorder" component={PlaceOrder} />
+          <Route path="/cart" component={Cart} />
+          <Route path="/diet-planner" component={DietPlanner} />
+          <Route path="/ai-planner" component={AIPlanner} />
           
-          <Switch>
-            <Route path="/placeorder" component={PlaceOrder} />
-            <Route path="/cart" component={Cart} />
-            <Route path="/diet-planner" component={DietPlanner} />
-            <Route path="/ai-planner" component={AIPlanner} />
-            
-            
-            <Route path="/history" component={History} />
-            <Route path="/diary" component={Diary} />
-            <Route path="/weekly-report" component={Diary} />
-            <Route path="/myorders" component={MyOrders} />
-            <Route exact path="/" component={Home} />
-            
-            {/* 404 Page - Ye hamesha sab se niche hona chahiye */}
-            <Route path="*" render={() => <div style={{padding: "100px", textAlign: "center"}}><h2>404 - Page Not Found</h2></div>} />
-          </Switch>
-        </div>
-        
-        {/* Conditional Footer - Hide on certain pages */}
-        <Route render={({ location }) => {
-          const hideFooterPages = ['/diet-planner', '/ai-planner', '/cart', '/myorders', '/history', '/placeorder', '/diary'];
-          return !hideFooterPages.includes(location.pathname) ? <Footer /> : null;
-        }} />
-        <AIAssistantFAB />
-      </BrowserRouter>
+          
+          <Route path="/history" component={History} />
+          <Route path="/diary" component={Diary} />
+          <Route path="/weekly-report" component={Diary} />
+          <Route path="/myorders" component={MyOrders} />
+          <Route exact path="/" component={Home} />
+          
+          {/* 404 Page - Ye hamesha sab se niche hona chahiye */}
+          <Route path="*" render={() => <div style={{padding: "100px", textAlign: "center"}}><h2>404 - Page Not Found</h2></div>} />
+        </Switch>
+      </div>
+      
+      {/* Conditional Footer - Hide on certain pages */}
+      <Route render={({ location }) => {
+        const hideFooterPages = ['/diet-planner', '/ai-planner', '/cart', '/myorders', '/history', '/placeorder', '/diary'];
+        return !hideFooterPages.includes(location.pathname) ? <Footer /> : null;
+      }} />
+      <AIAssistantFAB />
     </>
   );
 };

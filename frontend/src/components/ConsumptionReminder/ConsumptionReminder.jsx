@@ -73,6 +73,7 @@ const ConsumptionReminder = () => {
             );
 
             if (response.data.success) {
+                window.__dashboardCache = null; // Clear cache for live updates
                 alert(`Logged ${consumed} kcal!`);
                 setReminderOrder(null);
                 setShowLogModal(false);

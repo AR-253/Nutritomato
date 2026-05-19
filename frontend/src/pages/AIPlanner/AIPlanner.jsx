@@ -79,6 +79,7 @@ const AIPlanner = () => {
             );
 
             if (response.data.success) {
+                window.__dashboardCache = null; // Clear cache for live updates
                 alert(`Successfully logged: ${name}`);
                 setShowManualLog(false);
                 setManualEntry({ name: '', calories: '', protein: '', fats: '', carbs: '', mealType: 'Breakfast' });

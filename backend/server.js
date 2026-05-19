@@ -33,9 +33,18 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use("/uploads", express.static("uploads"))
+// ✅ Ensure DB is connected before processing any requests (Serverless Cold-Start Safe)
+app.use(async (req, res, next) => {
+    try {
+        await connectDB();
+        next();
+    } catch (err) {
+        console.error("DB Connection Middleware Error:", err.message);
+        res.status(500).json({ success: false, message: "Database connection failed", error: err.message });
+    }
+});
 
-connectDB();
+app.use("/uploads", express.static("uploads"))
 
 app.post("/api/food/predict-nutrition", upload.single('image'), async (req, res) => {
     try {

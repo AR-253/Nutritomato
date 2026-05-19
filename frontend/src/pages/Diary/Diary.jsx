@@ -120,6 +120,7 @@ const Diary = () => {
             try {
                 const response = await axios.post(url + "/api/diet/reset-day", { date }, { headers: { token } });
                 if (response.data.success) {
+                    window.__dashboardCache = null; // Clear cache for live updates
                     fetchDiaryData();
                     alert("Day reset successfully.");
                 }

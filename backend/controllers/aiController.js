@@ -105,21 +105,56 @@ const chatWithAI = async (req, res) => {
             });
         }
 
-        // Smart Retry Logic
+        // Smart Retry & Robust Multi-Model Fallback Logic
         const sleep = ms => new Promise(res => setTimeout(res, ms));
 
         async function safeGenerate(model, payload) {
+            let lastError = null;
+
+            // 1. Try Primary Model (MODEL_NAME)
             for (let i = 0; i < 3; i++) {
                 try {
                     return await model.generateContent(payload);
                 } catch (e) {
-                    // If not a 429 error, throw immediately
-                    if (!e.message.includes("429")) throw e;
-                    console.log(`[AI Retry] Hit 429, waiting ${2000 * (i.toString() + 1)}ms...`);
-                    await sleep(2000 * (i + 1)); // exponential backoff
+                    lastError = e;
+                    if (e.message.includes("429")) {
+                        console.log(`[AI Retry] Hit 429, waiting ${2000 * (i + 1)}ms...`);
+                        await sleep(2000 * (i + 1));
+                        continue;
+                    }
+                    if (e.message.includes("503") || e.message.includes("Service Unavailable") || e.message.includes("500") || e.message.includes("overloaded")) {
+                        console.log("[AI Fallback] Primary model hit 503/500/overloaded, attempting fallback model...");
+                        break;
+                    }
+                    throw e;
                 }
             }
-            throw new Error("429 Rate limit exceeded after retries");
+
+            // 2. Fallback Model: gemini-1.5-pro
+            try {
+                console.log("[AI Fallback] Instantiating gemini-1.5-pro fallback model...");
+                const fallbackModel = genAI.getGenerativeModel({
+                    model: "gemini-1.5-pro",
+                    systemInstruction: model.systemInstruction,
+                    generationConfig: model.generationConfig
+                });
+                return await fallbackModel.generateContent(payload);
+            } catch (fallbackErr) {
+                console.error("[AI Fallback Error] Fallback to gemini-1.5-pro failed:", fallbackErr.message);
+                
+                // 3. Secondary Fallback: gemini-1.5-flash
+                try {
+                    console.log("[AI Fallback] Instantiating gemini-1.5-flash secondary fallback model...");
+                    const secondaryModel = genAI.getGenerativeModel({
+                        model: "gemini-1.5-flash",
+                        systemInstruction: model.systemInstruction,
+                        generationConfig: model.generationConfig
+                    });
+                    return await secondaryModel.generateContent(payload);
+                } catch (secErr) {
+                    throw lastError || fallbackErr || secErr;
+                }
+            }
         }
 
         const result = await safeGenerate(model, {

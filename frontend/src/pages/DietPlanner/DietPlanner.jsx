@@ -338,7 +338,7 @@ Ensure strictly JSON output with the 'mealPlan' array. (Request ID: ${Date.now()
                                     <div className="bmi-value-display">
                                         <span className="bmi-label">Your BMI</span>
                                         <span className="bmi-number">{bmi?.value}</span>
-                                        <span className={`bmi-status ${bmi?.status.toLowerCase().replace(' ', '-')}`}>{bmi?.status}</span>
+                                        <span className={`bmi-status ${bmi?.status ? bmi.status.toLowerCase().replace(' ', '-') : ''}`}>{bmi?.status}</span>
                                     </div>
                                 </div>
                                 <div className="gauge-labels">

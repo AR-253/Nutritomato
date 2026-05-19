@@ -9,6 +9,6 @@ export const connectDB = async () => {
         console.log("DB Connected Successfully");
     } catch (error) {
         console.error("DB connection error:", error.message);
-        // Do not use process.exit(1) in serverless environments
+        throw error; // Rethrow for serverless handler safety
     }
 }
